@@ -135,6 +135,11 @@
         <p>&copy; 2024 Blue Frame Digital. All rights reserved.</p>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+        <i data-lucide="arrow-up" width="24" height="24"></i>
+    </button>
+
     <!-- Scripts -->
     <script src="/scripts/scroll-animations.js"></script>
     <script src="/scripts/interactions.js"></script>
@@ -142,6 +147,32 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
+
+        // Back to Top Button
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        // Show/hide button based on scroll position
+        function toggleBackToTop() {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        }
+
+        // Scroll to top when button is clicked
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Listen for scroll events
+        window.addEventListener('scroll', toggleBackToTop, { passive: true });
+        
+        // Check on page load
+        toggleBackToTop();
 
         // Contact form submission
         document.getElementById('contact-form').addEventListener('submit', async (e) => {
