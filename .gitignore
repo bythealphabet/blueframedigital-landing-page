@@ -2,4 +2,6 @@ node_modules/
 .env
 .DS_Store
 *.log
-
+nginx-blueframe.digital.conf
+nginx-blueframe.digital-improved.conf
+nginx-blueframe.digital-corrected.conf
