@@ -1,0 +1,235 @@
+/* Scroll Progress Indicator */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
+    z-index: 9999;
+    transition: width 0.1s ease-out;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Slide Up Animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide In Left */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide In Right */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Pulse Animation for Icons */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Draw In Animation for Icons */
+@keyframes drawIn {
+    from {
+        stroke-dashoffset: 1000;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Animation Classes */
+.animate-on-scroll {
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--easing-ease-out),
+                transform var(--duration-slow) var(--easing-ease-out);
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+}
+
+/* Fade In */
+.fade-in {
+    animation: fadeIn var(--duration-slow) var(--easing-ease-out) forwards;
+}
+
+/* Slide Up */
+.slide-up {
+    transform: translateY(30px);
+}
+
+.slide-up.animated {
+    transform: translateY(0);
+}
+
+/* Slide In Left */
+.slide-in-left {
+    transform: translateX(-30px);
+}
+
+.slide-in-left.animated {
+    transform: translateX(0);
+}
+
+/* Slide In Right */
+.slide-in-right {
+    transform: translateX(30px);
+}
+
+.slide-in-right.animated {
+    transform: translateX(0);
+}
+
+/* Scale In */
+.scale-in {
+    transform: scale(0.9);
+}
+
+.scale-in.animated {
+    transform: scale(1);
+}
+
+/* Stagger Delays */
+.stagger-1 { transition-delay: 0ms; }
+.stagger-2 { transition-delay: 100ms; }
+.stagger-3 { transition-delay: 200ms; }
+.stagger-4 { transition-delay: 300ms; }
+.stagger-5 { transition-delay: 400ms; }
+.stagger-6 { transition-delay: 500ms; }
+
+/* Hero Animations */
+.hero-headline {
+    opacity: 0;
+    animation: fadeIn var(--duration-slow) var(--easing-ease-out) 200ms forwards;
+}
+
+.hero-subheadline {
+    opacity: 0;
+    animation: fadeIn var(--duration-slow) var(--easing-ease-out) 400ms forwards;
+}
+
+.hero-cta {
+    opacity: 0;
+    animation: fadeIn var(--duration-normal) var(--easing-ease-out) 600ms forwards;
+}
+
+/* Icon Pulse */
+.icon-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Parallax Effect */
+.parallax {
+    transition: transform 0.1s ease-out;
+}
+
+/* Section Dividers */
+.section-divider {
+    position: relative;
+    overflow: hidden;
+    height: 100px;
+    margin: var(--spacing-2xl) 0;
+}
+
+.section-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--primary-blue-light) 20%, 
+        var(--primary-blue-bright) 50%, 
+        var(--primary-blue-light) 80%, 
+        transparent
+    );
+    transform: translateY(-50%);
+}
+
+.section-divider-wave {
+    position: relative;
+    overflow: hidden;
+    height: 60px;
+    margin: var(--spacing-2xl) 0;
+}
+
+.section-divider-wave::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-39.7C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%231e3a8a' fill-opacity='0.2'/%3E%3C/svg%3E") no-repeat center;
+    background-size: cover;
+}
+
+/* Counter Animation */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.counter-animate {
+    animation: countUp 0.6s var(--easing-ease-out) forwards;
+}
+
