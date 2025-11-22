@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Frame Digital | Professional Web Development in Curaçao</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" href="/favicon.ico">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
+            color: #e0e7ff;
+            background: #0a0e1a;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: #0f1729;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid #1e3a8a;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(30, 58, 138, 0.1) 2px,
+                    rgba(30, 58, 138, 0.1) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(30, 58, 138, 0.1) 2px,
+                    rgba(30, 58, 138, 0.1) 4px
+                );
+            background-size: 50px 50px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-nav {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .nav-button {
+            display: inline-block;
+            padding: 0.75rem 1.75rem;
+            background: transparent;
+            color: #60a5fa;
+            text-decoration: none;
+            border: 2px solid #1e3a8a;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .nav-button:hover {
+            background: #1e3a8a;
+            box-shadow: 0 0 25px rgba(30, 58, 138, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .nav-button.primary {
+            background: #1e3a8a;
+            box-shadow: 0 0 20px rgba(30, 58, 138, 0.4);
+        }
+
+        .nav-button.primary:hover {
+            background: #2563eb;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .logo span {
+            color: #93c5fd;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #93c5fd;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #60a5fa;
+            text-decoration: none;
+            border: 2px solid #1e3a8a;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(30, 58, 138, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #1e3a8a;
+            box-shadow: 0 0 30px rgba(30, 58, 138, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 2rem;
+            background: #0a0e1a;
+            border-bottom: 2px solid #1e3a8a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #60a5fa;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: #0f1729;
+            padding: 2rem;
+            border: 2px solid #1e3a8a;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(30, 58, 138, 0.03) 10px,
+                rgba(30, 58, 138, 0.03) 20px
+            );
+            pointer-events: none;
+        }
+
+        .service-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .service-icon {
+            margin-bottom: 1rem;
+            color: #60a5fa;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #93c5fd;
+        }
+
+        .service-card p {
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 2rem;
+            background: #0f1729;
+            border-bottom: 2px solid #1e3a8a;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 2rem;
+            background: #0a0e1a;
+            color: #e0e7ff;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #60a5fa;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .contact p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #93c5fd;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            color: #cbd5e1;
+        }
+
+        .contact-item i {
+            color: #60a5fa;
+        }
+
+        .contact-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #60a5fa;
+            text-decoration: none;
+            border: 2px solid #1e3a8a;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .contact-button:hover {
+            background: #1e3a8a;
+            box-shadow: 0 0 30px rgba(30, 58, 138, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .contact-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 1rem;
+            background: #0f1729;
+            border: 2px solid #1e3a8a;
+            border-radius: 4px;
+            color: #e0e7ff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: #64748b;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .form-message.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            color: #22c55e;
+        }
+
+        .form-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            color: #ef4444;
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            background: #0f1729;
+            color: #cbd5e1;
+            text-align: center;
+            border-top: 2px solid #1e3a8a;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="logo">Blue<span>Frame</span> Digital</h1>
+            <p class="tagline">Professional Websites for Construction Businesses in Curaçao</p>
+            <div class="hero-nav">
+                <a href="#services" class="nav-button">Our Services</a>
+                <a href="#about" class="nav-button">Why Choose Us</a>
+                <a href="#contact" class="nav-button primary">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">What We Do</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i data-lucide="globe" width="48" height="48"></i>
+                    </div>
+                    <h3>Professional Websites</h3>
+                    <p>Showcase your construction projects with a modern, professional website that builds trust with potential clients.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i data-lucide="image" width="48" height="48"></i>
+                    </div>
+                    <h3>Project Galleries</h3>
+                    <p>Display your completed projects with beautiful photo galleries that highlight your craftsmanship and expertise.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i data-lucide="phone" width="48" height="48"></i>
+                    </div>
+                    <h3>Lead Generation</h3>
+                    <p>Convert website visitors into clients with contact forms, quote requests, and clear calls-to-action.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i data-lucide="smartphone" width="48" height="48"></i>
+                    </div>
+                    <h3>Mobile-Friendly Design</h3>
+                    <p>Your clients browse on their phones. Your website will look perfect on all devices.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i data-lucide="search" width="48" height="48"></i>
+                    </div>
+                    <h3>Local SEO</h3>
+                    <p>Get found by local customers searching for construction services in Curaçao.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i data-lucide="headphones" width="48" height="48"></i>
+                    </div>
+                    <h3>Ongoing Support</h3>
+                    <p>We maintain and update your website so you can focus on building.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title">Why Construction Businesses Choose Us</h2>
+            <div class="about-content">
+                <p>We understand your world because we've lived it. With a decade of hands-on experience in construction—from swinging hammers as a carpenter to reading blueprints as a drafter, managing crews as a foreman, and running projects as a contractor—we know the challenges you face every day.</p>
+                <p>For the past 8+ years, we've applied that same dedication to mastering web development. This unique combination means we don't just build websites—we build digital tools that speak your language and solve your real business problems.</p>
+                <p>We know that construction professionals don't have time to waste on complicated technology. You need a website that works as hard as you do: one that showcases your craftsmanship, generates quality leads, and positions you as the professional choice in your market.</p>
+                <p>Whether you're a general contractor looking to attract bigger projects, a specialized tradesperson wanting to stand out from the competition, or a growing construction company ready to professionalize your brand—we'll build you a website that gets results.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2>Ready to Grow Your Construction Business?</h2>
+            <p>Let's build a website that showcases your work and brings in more clients.</p>
+            
+            <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="phone" name="phone" placeholder="Your Phone (optional)">
+                </div>
+                <div class="form-group">
+                    <textarea id="message" name="message" rows="5" placeholder="Tell us about your project..." required></textarea>
+                </div>
+                <button type="submit" class="contact-button" id="submit-btn">
+                    <span id="submit-text">Send Message</span>
+                    <span id="submit-loading" style="display: none;">Sending...</span>
+                </button>
+                <div id="form-message" class="form-message"></div>
+            </form>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i data-lucide="map-pin" width="24" height="24"></i>
+                    <span>Willemstad, Curaçao</span>
+                </div>
+                <div class="contact-item">
+                    <i data-lucide="mail" width="24" height="24"></i>
+                    <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="472e29212807252b32222135262a2269232e202e33262b">[email&#160;protected]</a></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Blue Frame Digital. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Contact form submission
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const form = e.target;
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+            const formMessage = document.getElementById('form-message');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitText.style.display = 'none';
+            submitLoading.style.display = 'inline';
+            formMessage.textContent = '';
+            formMessage.className = 'form-message';
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                message: document.getElementById('message').value
+            };
+            
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    formMessage.textContent = 'Thank you! Your message has been sent successfully.';
+                    formMessage.className = 'form-message success';
+                    form.reset();
+                } else {
+                    formMessage.textContent = data.error || 'Something went wrong. Please try again.';
+                    formMessage.className = 'form-message error';
+                }
+            } catch (error) {
+                formMessage.textContent = 'Network error. Please try again later.';
+                formMessage.className = 'form-message error';
+            } finally {
+                submitBtn.disabled = false;
+                submitText.style.display = 'inline';
+                submitLoading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
