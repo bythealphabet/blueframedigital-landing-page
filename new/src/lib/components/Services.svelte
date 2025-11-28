@@ -3,6 +3,7 @@
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import ServiceCard from './ServiceCard.svelte';
+	import { servicesVisibility } from '$lib/stores/scrollStore';
 
 	interface Service {
 		icon: string;
@@ -60,11 +61,17 @@
 	onMount(() => {
 		const observer = new IntersectionObserver(
 			([entry]) => {
+				// Update visibility store with intersection ratio for hero fade effect
+				servicesVisibility.set(entry.intersectionRatio * 3, 1);
+				
 				if (entry.isIntersecting) {
 					servicesVisible = true;
 				}
 			},
-			{ rootMargin: '0px 0px -15% 0px', threshold: 0.1 }
+			{ 
+				rootMargin: '0px 0px -15% 0px', 
+				threshold: Array.from({ length: 101 }, (_, i) => i / 100) // Track smooth transitions
+			}
 		);
 
 		if (sectionRef) {
@@ -118,14 +125,18 @@
 
 <style>
 	.services {
-		padding: var(--section-padding) var(--spacing-lg);
+		min-height: 100vh;
+		padding: var(--spacing-3xl) var(--spacing-xl);
 		background: var(--background-dark);
 		border-bottom: 2px solid var(--primary-blue);
+		display: flex;
+		align-items: center;
 	}
 
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;
+		width: 100%;
 	}
 
 	.section-title {
@@ -140,17 +151,17 @@
 	.services-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: var(--spacing-xl);
+		gap: var(--spacing-2xl);
 	}
 
 	@media (max-width: 768px) {
 		.services {
-			padding: var(--section-padding-mobile) var(--spacing-lg);
+			padding: var(--spacing-2xl) var(--spacing-lg);
 		}
 
 		.services-grid {
 			grid-template-columns: 1fr;
-			gap: var(--spacing-lg);
+			gap: var(--spacing-xl);
 		}
 
 		.section-title {
