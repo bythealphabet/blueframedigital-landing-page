@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#0f172a"/>
+  <rect x="50" y="50" width="700" height="500" fill="#1e293b" rx="8"/>
+  <rect x="70" y="70" width="660" height="80" fill="#3b82f6" opacity="0.4" rx="4"/>
+  <rect x="70" y="170" width="210" height="150" fill="#60a5fa" opacity="0.5" rx="4"/>
+  <rect x="295" y="170" width="210" height="150" fill="#60a5fa" opacity="0.5" rx="4"/>
+  <rect x="520" y="170" width="210" height="150" fill="#60a5fa" opacity="0.5" rx="4"/>
+  <rect x="70" y="340" width="660" height="140" fill="#3b82f6" opacity="0.3" rx="4"/>
+  <text x="400" y="420" font-family="Arial, sans-serif" font-size="28" fill="#60a5fa" text-anchor="middle">Modern Layout</text>
+</svg>
+

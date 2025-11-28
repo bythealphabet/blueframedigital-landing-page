@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <rect width="600" height="450" fill="#0f172a"/>
+  <rect x="50" y="320" width="500" height="80" fill="#334155"/>
+  <rect x="120" y="180" width="160" height="140" fill="#475569"/>
+  <rect x="320" y="150" width="160" height="170" fill="#475569"/>
+  <rect x="140" y="210" width="50" height="60" fill="#60a5fa" opacity="0.7"/>
+  <rect x="210" y="210" width="50" height="60" fill="#60a5fa" opacity="0.7"/>
+  <rect x="340" y="180" width="50" height="60" fill="#60a5fa" opacity="0.7"/>
+  <rect x="410" y="180" width="50" height="60" fill="#60a5fa" opacity="0.7"/>
+  <text x="300" y="420" font-family="Arial, sans-serif" font-size="22" fill="#60a5fa" text-anchor="middle" font-weight="bold">Office Building</text>
+</svg>
+
