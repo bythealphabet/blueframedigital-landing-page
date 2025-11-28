@@ -1,5 +1,5 @@
-@import './variables.css';
-@import './animations.css';
+@import "./variables.css";
+@import "./animations.css";
 
 * {
     margin: 0;
@@ -21,7 +21,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-heading);
     font-weight: 700;
     line-height: var(--line-height-tight);
@@ -58,8 +63,10 @@ a:hover {
 }
 
 /* Link Underline Animation */
-a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):hover::after {
-    content: '';
+a:not(.nav-button):not(.cta-button):not(.contact-button):not(
+        .portfolio-item
+    ):hover::after {
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
@@ -84,13 +91,13 @@ a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):ho
 }
 
 .hero::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
         repeating-linear-gradient(
             0deg,
             transparent,
@@ -166,7 +173,7 @@ a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):ho
 .nav-button::before,
 .cta-button::before,
 .contact-button::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -175,7 +182,9 @@ a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):ho
     border-radius: 50%;
     background: rgba(30, 58, 138, 0.2);
     transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+    transition:
+        width 0.6s,
+        height 0.6s;
 }
 
 .nav-button:hover::before,
@@ -251,7 +260,7 @@ a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):ho
 }
 
 .service-card::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -415,13 +424,17 @@ a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):ho
 }
 
 .portfolio-item::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+    background: linear-gradient(
+        135deg,
+        var(--primary-blue),
+        var(--primary-blue-light)
+    );
     opacity: 0;
     transition: opacity var(--duration-normal) var(--easing-ease-out);
     z-index: 1;
@@ -485,7 +498,11 @@ a:not(.nav-button):not(.cta-button):not(.contact-button):not(.portfolio-item):ho
 .portfolio-placeholder {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+    background: linear-gradient(
+        135deg,
+        var(--primary-blue),
+        var(--primary-blue-light)
+    );
     display: flex;
     align-items: center;
     justify-content: center;
@@ -612,40 +629,40 @@ footer {
     :root {
         --section-padding: var(--section-padding-mobile);
     }
-    
+
     .logo {
         font-size: clamp(2rem, 8vw, 3rem);
     }
-    
+
     .tagline {
         font-size: clamp(1.1rem, 4vw, 1.4rem);
     }
-    
+
     .section-title {
         font-size: clamp(1.75rem, 6vw, 2.25rem);
     }
-    
+
     .services-grid,
     .portfolio-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
     }
-    
+
     .hero-nav {
         flex-direction: column;
         width: 100%;
     }
-    
+
     .nav-button,
     .cta-button {
         width: 100%;
         text-align: center;
     }
-    
+
     .trust-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .contact-info {
         flex-direction: column;
         gap: var(--spacing-md);
@@ -724,4 +741,3 @@ textarea:focus-visible {
     outline: 3px solid var(--primary-blue-light);
     outline-offset: 2px;
 }
-
