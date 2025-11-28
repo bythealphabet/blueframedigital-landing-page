@@ -2,9 +2,11 @@
 	import { onMount } from 'svelte';
 	import { fly, scale } from 'svelte/transition';
 	import { quintOut, elasticOut, backOut } from 'svelte/easing';
+	import { servicesVisibility } from '$lib/stores/scrollStore';
 
 	let heroVisible = $state(false);
 	let scrollY = $state(0);
+	let heroOpacity = $state(1);
 
 	// Check if animations should be reduced
 	const prefersReducedMotion =
@@ -15,12 +17,19 @@
 
 	onMount(() => {
 		heroVisible = true;
+
+		// Subscribe to services visibility to fade hero out
+		const unsubscribe = servicesVisibility.subscribe((visibility) => {
+			heroOpacity = 1 - visibility;
+		});
+
+		return unsubscribe;
 	});
 </script>
 
 <svelte:window bind:scrollY />
 
-<section class="hero" style="transform: translateY({scrollY * 0.3}px)">
+<section class="hero" style="transform: translateY({scrollY * 0.3}px); opacity: {heroOpacity};">
 	<div class="hero-content">
 		{#if heroVisible}
 			<h1
@@ -100,8 +109,9 @@
 		padding: var(--spacing-lg);
 		position: relative;
 		overflow: hidden;
-		border-bottom: 2rem solid var(--primary-blue);
-		will-change: transform;
+		/* border-bottom: 2rem solid var(--primary-blue); */
+		will-change: transform, opacity;
+		transition: opacity 600ms ease-out;
 	}
 
 	.hero::before {
