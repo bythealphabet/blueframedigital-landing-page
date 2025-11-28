@@ -100,7 +100,7 @@
 
 		<div class="contact-info">
 			<div class="contact-item">
-				<i data-lucide="map-pin" width="24" height="24"></i>
+				<i data-lucide="map-pin"></i>
 				<span>Willemstad, Curaçao</span>
 			</div>
 		</div>
