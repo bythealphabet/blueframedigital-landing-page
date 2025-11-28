@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { Spring } from 'svelte/motion';
 
-	let isVisible = $state(false);
+	let scrollY = $state(0);
 
-	function toggleVisibility() {
-		if (window.pageYOffset > 300) {
-			isVisible = true;
-		} else {
-			isVisible = false;
-		}
-	}
+	// Spring for back-to-top button scale (smooth appearance/disappearance)
+	const backToTopScale = new Spring(0, {
+		stiffness: 0.2,
+		damping: 0.6
+	});
+
+	// Derived state for showing button
+	let showBackToTop = $derived(scrollY > 300);
 
 	function scrollToTop() {
 		window.scrollTo({
@@ -19,8 +21,12 @@
 	}
 
 	onMount(() => {
-		window.addEventListener('scroll', toggleVisibility, { passive: true });
-		toggleVisibility();
+		const handleScroll = () => {
+			scrollY = window.scrollY;
+		};
+
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		handleScroll();
 
 		// Initialize Lucide icons
 		if (typeof window !== 'undefined' && (window as any).lucide) {
@@ -28,8 +34,13 @@
 		}
 
 		return () => {
-			window.removeEventListener('scroll', toggleVisibility);
+			window.removeEventListener('scroll', handleScroll);
 		};
+	});
+
+	// Watch showBackToTop and update spring
+	$effect(() => {
+		backToTopScale.target = showBackToTop ? 1 : 0;
 	});
 </script>
 
@@ -37,9 +48,16 @@
 	<script src="https://unpkg.com/lucide@latest"></script>
 </svelte:head>
 
-<button class="back-to-top" class:visible={isVisible} onclick={scrollToTop} aria-label="Back to top">
-	<i data-lucide="arrow-up" width="24" height="24"></i>
-</button>
+{#if backToTopScale.current > 0.01}
+	<button
+		class="back-to-top"
+		onclick={scrollToTop}
+		style="transform: scale({backToTopScale.current}); opacity: {backToTopScale.current}"
+		aria-label="Back to top"
+	>
+		<i data-lucide="arrow-up"></i>
+	</button>
+{/if}
 
 <style>
 	.back-to-top {
@@ -56,29 +74,16 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		opacity: 0;
-		visibility: hidden;
-		transform: translateY(20px);
-		transition: var(--transition-normal);
 		z-index: 1000;
 		box-shadow: 0 0 20px rgba(30, 58, 138, 0.4);
-	}
-
-	.back-to-top.visible {
-		opacity: 1;
-		visibility: visible;
-		transform: translateY(0);
+		will-change: transform, opacity;
+		transition: background 0.3s ease;
 	}
 
 	.back-to-top:hover {
 		background: var(--primary-blue-light);
 		border-color: var(--primary-blue-light);
 		box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
-		transform: translateY(-3px) scale(1.1);
-	}
-
-	.back-to-top:active {
-		transform: translateY(-1px) scale(1.05);
 	}
 
 	.back-to-top :global(svg) {

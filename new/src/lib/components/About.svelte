@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fly, fade } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
 	const paragraphs = [
 		"We understand your world because we've lived it. With a decade of hands-on experience in construction—from swinging hammers as a carpenter to reading blueprints as a drafter, managing crews as a foreman, and running projects as a contractor—we know the challenges you face every day.",
@@ -8,30 +10,22 @@
 		"Whether you're a general contractor looking to attract bigger projects, a specialized tradesperson wanting to stand out from the competition, or a growing construction company ready to professionalize your brand—we'll build you a website that gets results."
 	];
 
-	let animatedParagraphs = $state<boolean[]>([]);
+	let aboutVisible = $state(false);
 	let sectionRef: HTMLElement;
 
+	// Check if animations should be reduced
+	const prefersReducedMotion =
+		typeof window !== 'undefined'
+			? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+			: false;
+	const shouldAnimate = !prefersReducedMotion;
+
 	onMount(() => {
-		animatedParagraphs = paragraphs.map(() => false);
-
-		if (!('IntersectionObserver' in window)) {
-			animatedParagraphs = paragraphs.map(() => true);
-			return;
-		}
-
 		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const paras = entry.target.querySelectorAll('.about-paragraph');
-						paras.forEach((para, index) => {
-							setTimeout(() => {
-								animatedParagraphs[index] = true;
-							}, index * 200);
-						});
-						observer.unobserve(entry.target);
-					}
-				});
+			([entry]) => {
+				if (entry.isIntersecting) {
+					aboutVisible = true;
+				}
 			},
 			{ rootMargin: '0px 0px -15% 0px', threshold: 0.1 }
 		);
@@ -50,13 +44,32 @@
 
 <section class="about" id="about" bind:this={sectionRef}>
 	<div class="container">
-		<h2 class="section-title">Why Construction Businesses Choose Us</h2>
+		<h2 class="section-title">
+			{#if aboutVisible}
+				<span
+					transition:fade={{
+						duration: 800
+					}}
+				>
+					Why Construction Businesses Choose Us
+				</span>
+			{/if}
+		</h2>
 		<div class="about-content">
-			{#each paragraphs as paragraph, i (i)}
-				<p class="about-paragraph" class:animated={animatedParagraphs[i]}>
-					{paragraph}
-				</p>
-			{/each}
+			{#if aboutVisible}
+				{#each paragraphs as paragraph, i (i)}
+					<p
+						transition:fly={{
+							x: shouldAnimate ? (i % 2 === 0 ? -60 : 60) : 0,
+							duration: 800,
+							delay: 200 + i * 200,
+							easing: quintOut
+						}}
+					>
+						{paragraph}
+					</p>
+				{/each}
+			{/if}
 		</div>
 	</div>
 </section>
@@ -88,29 +101,11 @@
 		text-align: center;
 	}
 
-	.about-paragraph {
+	.about-content p {
 		font-size: var(--font-size-body);
 		color: var(--text-tertiary);
 		line-height: var(--line-height-relaxed);
 		margin-bottom: var(--spacing-lg);
-		opacity: 0;
-		transform: translateX(-60px);
-		transition:
-			opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-			transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-	}
-
-	.about-paragraph.animated {
-		opacity: 1;
-		transform: translateX(0);
-	}
-
-	.about-paragraph:nth-child(even) {
-		transform: translateX(60px);
-	}
-
-	.about-paragraph:nth-child(even).animated {
-		transform: translateX(0);
 	}
 
 	@media (max-width: 768px) {
@@ -119,7 +114,7 @@
 		}
 
 		.section-title {
-			font-size: clamp(1.75rem, 6vw, 2.25rem);
+			font-size: clamp(2.8rem, 6vw, 3.6rem);
 		}
 	}
 </style>

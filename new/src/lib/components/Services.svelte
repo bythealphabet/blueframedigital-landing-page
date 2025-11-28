@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+	import ServiceCard from './ServiceCard.svelte';
 
 	interface Service {
 		icon: string;
@@ -44,30 +47,22 @@
 		}
 	];
 
-	let animatedElements = $state<boolean[]>([]);
+	let servicesVisible = $state(false);
 	let sectionRef: HTMLElement;
 
+	// Check if animations should be reduced
+	const prefersReducedMotion =
+		typeof window !== 'undefined'
+			? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+			: false;
+	const shouldAnimate = !prefersReducedMotion;
+
 	onMount(() => {
-		animatedElements = services.map(() => false);
-
-		if (!('IntersectionObserver' in window)) {
-			animatedElements = services.map(() => true);
-			return;
-		}
-
 		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const cards = entry.target.querySelectorAll('.service-card');
-						cards.forEach((card, index) => {
-							setTimeout(() => {
-								animatedElements[index] = true;
-							}, index * 150);
-						});
-						observer.unobserve(entry.target);
-					}
-				});
+			([entry]) => {
+				if (entry.isIntersecting) {
+					servicesVisible = true;
+				}
 			},
 			{ rootMargin: '0px 0px -15% 0px', threshold: 0.1 }
 		);
@@ -95,16 +90,27 @@
 
 <section class="services" id="services" bind:this={sectionRef}>
 	<div class="container">
-		<h2 class="section-title">What We Do</h2>
+		<h2 class="section-title">
+			{#if servicesVisible}
+				<span
+					transition:fly={{
+						y: shouldAnimate ? 30 : 0,
+						duration: 800,
+						easing: quintOut
+					}}
+				>
+					What We Do
+				</span>
+			{/if}
+		</h2>
 		<div class="services-grid">
 			{#each services as service, i (service.title)}
-				<div class="service-card" class:animated={animatedElements[i]}>
-					<div class="service-icon">
-						<i data-lucide={service.icon} width="48" height="48"></i>
-					</div>
-					<h3>{service.title}</h3>
-					<p>{service.description}</p>
-				</div>
+				<ServiceCard
+					title={service.title}
+					description={service.description}
+					icon={service.icon}
+					delay={i * 150}
+				/>
 			{/each}
 		</div>
 	</div>
@@ -137,68 +143,6 @@
 		gap: var(--spacing-xl);
 	}
 
-	.service-card {
-		background: var(--background-card);
-		padding: var(--spacing-xl);
-		border: 2px solid var(--primary-blue);
-		border-radius: var(--radius-sm);
-		transition: var(--transition-normal);
-		position: relative;
-		overflow: hidden;
-		opacity: 0;
-		transform: translateY(40px);
-	}
-
-	.service-card.animated {
-		opacity: 1;
-		transform: translateY(0);
-	}
-
-	.service-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: repeating-linear-gradient(
-			45deg,
-			transparent,
-			transparent 10px,
-			rgba(30, 58, 138, 0.03) 10px,
-			rgba(30, 58, 138, 0.03) 20px
-		);
-		pointer-events: none;
-	}
-
-	.service-card:hover {
-		border-color: var(--primary-blue-light);
-		box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
-		transform: translateY(-8px);
-	}
-
-	.service-icon {
-		margin-bottom: var(--spacing-md);
-		color: var(--primary-blue-bright);
-		transition: var(--transition-normal);
-	}
-
-	.service-card:hover .service-icon {
-		color: var(--primary-blue-light);
-		transform: scale(1.1);
-	}
-
-	.service-card h3 {
-		font-size: var(--font-size-h3);
-		margin-bottom: var(--spacing-md);
-		color: var(--text-secondary);
-	}
-
-	.service-card p {
-		color: var(--text-tertiary);
-		line-height: var(--line-height-relaxed);
-	}
-
 	@media (max-width: 768px) {
 		.services {
 			padding: var(--section-padding-mobile) var(--spacing-lg);
@@ -210,7 +154,7 @@
 		}
 
 		.section-title {
-			font-size: clamp(1.75rem, 6vw, 2.25rem);
+			font-size: clamp(2.8rem, 6vw, 3.6rem);
 		}
 	}
 </style>

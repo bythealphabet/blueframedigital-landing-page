@@ -1,28 +1,91 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fly, scale } from 'svelte/transition';
+	import { quintOut, elasticOut, backOut } from 'svelte/easing';
 
-	let isAnimated = $state(false);
+	let heroVisible = $state(false);
+	let scrollY = $state(0);
+
+	// Check if animations should be reduced
+	const prefersReducedMotion =
+		typeof window !== 'undefined'
+			? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+			: false;
+	const shouldAnimate = !prefersReducedMotion;
 
 	onMount(() => {
-		setTimeout(() => {
-			isAnimated = true;
-		}, 100);
+		heroVisible = true;
 	});
 </script>
 
-<section class="hero">
+<svelte:window bind:scrollY />
+
+<section class="hero" style="transform: translateY({scrollY * 0.3}px)">
 	<div class="hero-content">
-		<h1 class="logo hero-headline" class:animated={isAnimated}>
-			Blue<span>Frame</span> Digital
-		</h1>
-		<p class="tagline hero-subheadline" class:animated={isAnimated}>
-			Professional Websites for Construction Businesses in Curaçao
-		</p>
-		<div class="hero-nav">
-			<a href="#services" class="nav-button">Our Services</a>
-			<a href="#about" class="nav-button">Why Choose Us</a>
-			<a href="#contact" class="nav-button primary">Get Started</a>
-		</div>
+		{#if heroVisible}
+			<h1
+				class="logo hero-headline"
+				transition:fly={{
+					y: shouldAnimate ? 50 : 0,
+					duration: 1000,
+					delay: 200,
+					easing: quintOut
+				}}
+			>
+				Blue<span>Frame</span> Digital
+			</h1>
+
+			<p
+				class="tagline hero-subheadline"
+				transition:fly={{
+					y: shouldAnimate ? 30 : 0,
+					duration: 800,
+					delay: 500,
+					easing: quintOut
+				}}
+			>
+				Professional Websites for Construction Businesses in Curaçao
+			</p>
+
+			<div class="hero-nav">
+				<a
+					href="#services"
+					class="nav-button"
+					transition:fly={{
+						y: shouldAnimate ? 20 : 0,
+						duration: 600,
+						delay: 700,
+						easing: backOut
+					}}
+				>
+					Our Services
+				</a>
+				<a
+					href="#about"
+					class="nav-button"
+					transition:fly={{
+						y: shouldAnimate ? 20 : 0,
+						duration: 600,
+						delay: 850,
+						easing: backOut
+					}}
+				>
+					Why Choose Us
+				</a>
+				<a
+					href="#contact"
+					class="nav-button primary"
+					transition:scale={{
+						duration: 800,
+						delay: 1000,
+						easing: elasticOut,
+						start: shouldAnimate ? 0.3 : 1
+					}}
+				>
+					Get Started
+				</a>
+			</div>
+		{/if}
 	</div>
 </section>
 
@@ -37,7 +100,8 @@
 		padding: var(--spacing-lg);
 		position: relative;
 		overflow: hidden;
-		border-bottom: 2px solid var(--primary-blue);
+		border-bottom: 2rem solid var(--primary-blue);
+		will-change: transform;
 	}
 
 	.hero::before {
@@ -84,7 +148,7 @@
 	}
 
 	.tagline {
-		font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+		font-size: clamp(2rem, 2.5vw, 2.8rem);
 		color: var(--text-secondary);
 		margin-bottom: var(--spacing-xl);
 		font-weight: 300;
@@ -150,29 +214,14 @@
 		box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
 	}
 
-	.hero-headline {
-		opacity: 0;
-	}
-
-	.hero-headline.animated {
-		animation: fadeIn var(--duration-slow) var(--easing-ease-out) 200ms forwards;
-	}
-
-	.hero-subheadline {
-		opacity: 0;
-	}
-
-	.hero-subheadline.animated {
-		animation: fadeIn var(--duration-slow) var(--easing-ease-out) 400ms forwards;
-	}
 
 	@media (max-width: 768px) {
 		.logo {
-			font-size: clamp(2rem, 8vw, 3rem);
+			font-size: clamp(3.2rem, 8vw, 4.8rem);
 		}
 
 		.tagline {
-			font-size: clamp(1.1rem, 4vw, 1.4rem);
+			font-size: clamp(1.76rem, 4vw, 2.24rem);
 		}
 
 		.hero-nav {
