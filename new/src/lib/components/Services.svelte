@@ -35,18 +35,15 @@
 
 	// Derived state
 	const selectedService = $derived(selectedSlug ? getServiceBySlug(selectedSlug) : null);
-	
+
 	// Reorder services array: selected card first, then others
 	const displayedServices = $derived.by(() => {
 		if (!selectedService) return services;
-		
+
 		// Put selected service first, keep others in original order
-		return [
-			selectedService,
-			...services.filter((s) => s.slug !== selectedSlug)
-		];
+		return [selectedService, ...services.filter((s) => s.slug !== selectedSlug)];
 	});
-	
+
 	const hasSelection = $derived(!!selectedService);
 
 	// Respect reduced motion preference
@@ -57,7 +54,10 @@
 	let cardStatesMap = $state(new Map());
 
 	// Custom 3D elevation transition for selected card
-	function elevatedFlip(node: HTMLElement, params: { duration: number; easing: (t: number) => number }) {
+	function elevatedFlip(
+		node: HTMLElement,
+		params: { duration: number; easing: (t: number) => number }
+	) {
 		const { duration, easing } = params;
 		return {
 			duration,
@@ -70,7 +70,7 @@
 				const scale = 1 + Math.sin(u * Math.PI) * 0.1;
 				// Add subtle rotation
 				const rotateX = Math.sin(u * Math.PI) * 5;
-				
+
 				return `
 					transform: perspective(1500px) translateZ(${elevation}px) scale(${scale}) rotateX(${rotateX}deg);
 					z-index: ${u > 0.01 ? 100 : 1};
@@ -103,6 +103,7 @@
 	function handleCardClick(slug: string) {
 		if (selectedSlug === slug) {
 			// Deselect - trigger deselection animation
+			//
 			animationCoordinator.deselectCard(
 				slug,
 				services.map((s) => s.slug)
@@ -121,6 +122,7 @@
 				);
 			}
 			selectedSlug = slug;
+			console.log('Deselecting card:', selectedSlug);
 			// Trigger selection animation
 			animationCoordinator.selectCard(
 				slug,
@@ -185,10 +187,7 @@
 		<!-- Title only shown when no selection -->
 		<h2 class="section-title">
 			{#if servicesVisible}
-				<span
-				>
-					What We Do
-				</span>
+				<span> What We Do </span>
 			{/if}
 		</h2>
 
@@ -196,8 +195,9 @@
 			{#each displayedServices as service, i (service.slug)}
 				{@const isSelected = service.slug === selectedSlug}
 				{@const shouldHide = hasSelection && !isSelected && animPhase === 'complete'}
-				{@const isRepositioning = hasSelection && isSelected && animPhase !== 'idle' && animPhase !== 'complete'}
-				
+				{@const isRepositioning =
+					hasSelection && isSelected && animPhase !== 'idle' && animPhase !== 'complete'}
+
 				<div
 					class="card-wrapper"
 					class:is-selected={isSelected}
@@ -208,34 +208,32 @@
 					out:send={{ key: service.slug }}
 					animate:flip={{ duration: shouldAnimate ? 800 : 0, easing: quintOut }}
 				>
-					<!-- {#if !shouldHide} -->
-					<!-- {/if} -->
-
-					<ServiceCard
-						{service}
-						{isSelected}
-						cardState={getCardState(service.slug)}
-						delay={hasSelection ? 0 : i * 150}
-						onclick={() => handleCardClick(service.slug)}
-					/>
-
+					{#if !shouldHide}
+						<ServiceCard
+							{service}
+							{isSelected}
+							cardState={getCardState(service.slug)}
+							delay={hasSelection ? 0 : i * 150}
+							onclick={() => handleCardClick(service.slug)}
+						/>
+					{/if}
 				</div>
 			{/each}
 
 			<!-- Detail content appears after animation -->
-			<!-- {#if hasSelection && animPhase === 'complete' && selectedService}
-				<div 
-					class="detail-content-area" 
-					in:fly={{ 
-						x: shouldAnimate ? 100 : 0, 
-						duration: 600, 
+			{#if hasSelection && animPhase === 'complete' && selectedService}
+				<div
+					class="detail-content-area"
+					in:fly={{
+						x: shouldAnimate ? 100 : 0,
+						duration: 600,
 						delay: 200,
-						easing: quintOut 
+						easing: quintOut
 					}}
 				>
 					<DetailContentGrid service={selectedService} />
 				</div>
-			{/if} -->
+			{/if}
 		</div>
 	</div>
 
@@ -249,7 +247,7 @@
 	</div>
 </section>
 
-<style>
+<style lang="scss">
 	.services {
 		min-height: 100vh;
 		padding: var(--spacing-3xl) var(--spacing-xl);
@@ -257,11 +255,19 @@
 		border-bottom: 2px solid var(--primary-blue);
 		display: flex;
 		align-items: center;
-	}
 
-	.services.has-selection {
-		align-items: flex-start;
-		padding-top: var(--spacing-2xl);
+		/*&.has-selection {
+			align-items: flex-start;
+			padding-top: var(--spacing-2xl);
+		}*/
+
+		@media (max-width: 768px) {
+			padding: var(--spacing-2xl) var(--spacing-lg);
+
+			&.has-selection {
+				padding-top: var(--spacing-lg);
+			}
+		}
 	}
 
 	.container {
@@ -277,11 +283,17 @@
 		color: var(--primary-blue-bright);
 		font-weight: 700;
 		text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+
+		@media (max-width: 768px) {
+			font-size: clamp(2.8rem, 6vw, 3.6rem);
+		}
 	}
 
 	.services-grid {
+		overflow: hidden;
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: repeat(auto-fill, minmax(25rem, 1fr));
 		grid-auto-rows: 25rem;
 		gap: var(--spacing-2xl);
 		align-items: start;
@@ -289,31 +301,31 @@
 		perspective: 2000px;
 		perspective-origin: center center;
 		transform-style: preserve-3d;
-	}
 
-	.services-grid.has-selection {
-		grid-template-columns: repeat(3, 1fr);
-		grid-auto-rows: 25rem;
-		gap: var(--spacing-xl);
-		align-items: start;
-	}
+		/*&.has-selection {
+			grid-template-columns: repeat(3, 1fr);
+			grid-auto-rows: 25rem;
+			gap: var(--spacing-xl);
+			align-items: start;
+		}*/
 
-	/* Responsive: 2 columns on tablet */
-	@media (max-width: 1024px) {
-		.services-grid:has(.is-selected) {
-			grid-template-columns: repeat(2, 1fr);
+		/* Responsive: 2 columns on tablet */
+		@media (max-width: 1024px) {
+			&:has(.is-selected) {
+				grid-template-columns: repeat(2, 1fr);
+			}
 		}
-	}
 
-	/* Responsive: 1 column on mobile */
-	@media (max-width: 768px) {
-		.services-grid {
+		/* Responsive: 1 column on mobile */
+		@media (max-width: 768px) {
 			grid-template-columns: 1fr;
 			gap: var(--spacing-xl);
-		}
 
-		.services-grid.has-selection {
-			grid-template-columns: 1fr;
+			&.has-selection {
+				background: salmon !important;
+				grid-template-columns: 1fr;
+				gap: var(--spacing-md);
+			}
 		}
 	}
 
@@ -326,22 +338,34 @@
 		max-height: 25rem;
 		transform-style: preserve-3d;
 		transform-origin: center center;
-		transition: 
+		transition:
 			transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			z-index 0s;
-	}
 
-	.card-wrapper.is-selected {
-		grid-column: 1;
-		/* Lock dimensions to prevent stretching */
-		min-height: 25rem;
-		max-height: 25rem;
-		width: 100%;
-	}
+		&.is-selected {
+			grid-column: 1;
+			/* Lock dimensions to prevent stretching */
+			min-height: 25rem;
+			max-height: 25rem;
+			width: 100%;
+		}
 
-	.card-wrapper.is-elevated {
-		z-index: 100;
-		animation: elevateAndMove 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		&.is-elevated {
+			z-index: 100;
+			animation: elevateAndMove 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		}
+
+		&.is-exiting {
+			pointer-events: none;
+			opacity: 1;
+			/*transition:
+				opacity 0.4s ease-out,
+				transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);*/
+		}
+
+		&.is-hidden {
+			display: none;
+		}
 	}
 
 	@keyframes elevateAndMove {
@@ -363,18 +387,6 @@
 		}
 	}
 
-	.card-wrapper.is-exiting {
-		pointer-events: none;
-		opacity: 1;
-		transition: 
-			opacity 0.4s ease-out,
-			transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	.card-wrapper.is-hidden {
-		display: none;
-	}
-
 	/* Screen reader only */
 	.sr-only {
 		position: absolute;
@@ -386,29 +398,5 @@
 		clip: rect(0, 0, 0, 0);
 		white-space: nowrap;
 		border-width: 0;
-	}
-
-	@media (max-width: 768px) {
-		.services {
-			padding: var(--spacing-2xl) var(--spacing-lg);
-		}
-
-		.services.has-selection {
-			padding-top: var(--spacing-lg);
-		}
-
-		.services-grid {
-			grid-template-columns: 1fr;
-			gap: var(--spacing-xl);
-		}
-
-		.services-grid.has-selection {
-			grid-template-columns: 1fr;
-			gap: var(--spacing-md);
-		}
-
-		.section-title {
-			font-size: clamp(2.8rem, 6vw, 3.6rem);
-		}
 	}
 </style>

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fly, fade, scale } from 'svelte/transition';
 	import { quintOut, elasticOut } from 'svelte/easing';
+	import { goto } from '$app/navigation';
 	import { prefersReducedMotion as reducedMotionStore } from 'svelte/motion';
 	import type { Service } from '$lib/data/services';
 	import type { CardAnimationState } from '$lib/animations/animationCoordinator';
@@ -83,6 +84,8 @@
 	function handleClick() {
 		if (onclick) {
 			onclick();
+		} else if (service.slug && !isSelected) {
+			goto(`/services/${service.slug}`);
 		}
 	}
 
@@ -122,7 +125,7 @@
 			onmouseleave={handleMouseLeave}
 			onmouseenter={handleMouseEnter}
 			onclick={handleClick}
-			transition:fly={{ y: shouldAnimate ? 60 : 0, duration: 800, delay, easing: quintOut }}
+			in:fly={{ y: shouldAnimate ? 60 : 0, duration: 800, delay, easing: quintOut }}
 			style="transform: perspective(1000px) rotateX({rotateX}deg) rotateY({rotateY}deg)"
 			tabindex={service.slug || onclick ? 0 : -1}
 			aria-label={isSelected
@@ -258,7 +261,7 @@
 	}
 
 	.service-icon.pulse {
-		animation: pulse 0.6s ease-in-out;
+		/* animation: pulse 0.6s ease-in-out; */
 		color: var(--primary-blue-light);
 		filter: drop-shadow(0 0 20px var(--primary-blue-bright));
 	}
