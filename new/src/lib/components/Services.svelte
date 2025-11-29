@@ -182,10 +182,13 @@
 	<script src="https://unpkg.com/lucide@latest"></script>
 </svelte:head>
 
-<section class="services" class:has-selection={hasSelection} id="services" bind:this={sectionRef}>
-	<div class="container">
-		<!-- Title only shown when no selection -->
-<section class="services base-grid" id="services" bind:this={sectionRef}>
+<!-- Title only shown when no selection -->
+<section
+	class="services base-grid"
+	id="services"
+	bind:this={sectionRef}
+	class:has-selection={hasSelection}
+>
 	<div class="container base-grid">
 		<h2 class="section-title">
 			{#if servicesVisible}
@@ -298,6 +301,7 @@
 		gap: var(--spacing-2xl);
 
 		grid-column: 2 / -2;
+
 		@media (min-width: 1211px) {
 			--card-size: 35rem;
 		}
