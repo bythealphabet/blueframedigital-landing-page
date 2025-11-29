@@ -62,25 +62,20 @@
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				// Update visibility store with intersection ratio for hero fade effect
-				servicesVisibility.set(entry.intersectionRatio * 3, 1);
-				
+				servicesVisibility.set(entry.intersectionRatio * 3);
+
 				if (entry.isIntersecting) {
 					servicesVisible = true;
 				}
 			},
-			{ 
-				rootMargin: '0px 0px -15% 0px', 
+			{
+				rootMargin: '0px 0px -15% 0px',
 				threshold: Array.from({ length: 101 }, (_, i) => i / 100) // Track smooth transitions
 			}
 		);
 
 		if (sectionRef) {
 			observer.observe(sectionRef);
-		}
-
-		// Initialize Lucide icons
-		if (typeof window !== 'undefined' && (window as any).lucide) {
-			(window as any).lucide.createIcons();
 		}
 
 		return () => {
@@ -95,8 +90,8 @@
 	<script src="https://unpkg.com/lucide@latest"></script>
 </svelte:head>
 
-<section class="services" id="services" bind:this={sectionRef}>
-	<div class="container">
+<section class="services base-grid" id="services" bind:this={sectionRef}>
+	<div class="container base-grid">
 		<h2 class="section-title">
 			{#if servicesVisible}
 				<span
@@ -125,18 +120,30 @@
 
 <style>
 	.services {
+		--top-space: 30rem;
+		--bottom-space: 30rem;
+
 		min-height: 100vh;
-		padding: var(--spacing-3xl) var(--spacing-xl);
 		background: var(--background-dark);
-		border-bottom: 2px solid var(--primary-blue);
-		display: flex;
-		align-items: center;
+		grid-template-rows: var(--top-space) auto var(--bottom-space);
+
+		grid-column: 1 / -1;
+
+		@media (min-width: 767px) {
+			--top-space: 15rem;
+			--bottom-space: 15rem;
+		}
 	}
 
 	.container {
-		max-width: 1200px;
-		margin: 0 auto;
-		width: 100%;
+		grid-template-rows: minmax(5rem, 10rem) auto;
+		grid-column: 1 / -1;
+		grid-row: 2;
+
+		@media (min-width: 767px) {
+			grid-template-rows: var(--top-space) auto;
+			grid-row: 1 / span 2;
+		}
 	}
 
 	.section-title {
@@ -146,26 +153,26 @@
 		color: var(--primary-blue-bright);
 		font-weight: 700;
 		text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+
+		grid-column: 1 / -1;
+		justify-self: center;
+		align-self: center;
 	}
 
 	.services-grid {
+		--card-size: 30rem;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(var(--card-size), 1fr));
+		grid-template-rows: repeat(auto-fit, 30rem);
 		gap: var(--spacing-2xl);
-	}
 
-	@media (max-width: 768px) {
-		.services {
-			padding: var(--spacing-2xl) var(--spacing-lg);
+		grid-column: 2 / -2;
+		@media (min-width: 1211px) {
+			--card-size: 35rem;
 		}
 
-		.services-grid {
-			grid-template-columns: 1fr;
-			gap: var(--spacing-xl);
-		}
-
-		.section-title {
-			font-size: clamp(2.8rem, 6vw, 3.6rem);
+		@media (min-width: 1550px) {
+			grid-column: 3 / -3;
 		}
 	}
 </style>

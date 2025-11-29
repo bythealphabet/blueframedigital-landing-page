@@ -13,5 +13,7 @@
 		color: var(--text-tertiary);
 		text-align: center;
 		border-top: 2px solid var(--primary-blue);
+
+		grid-column: 1 / -1;
 	}
 </style>
