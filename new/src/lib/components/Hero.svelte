@@ -112,6 +112,8 @@
 		/* border-bottom: 2rem solid var(--primary-blue); */
 		will-change: transform, opacity;
 		transition: opacity 600ms ease-out;
+
+		grid-column: 1 / -1;
 	}
 
 	.hero::before {
@@ -121,7 +123,8 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: repeating-linear-gradient(
+		background:
+			repeating-linear-gradient(
 				0deg,
 				transparent,
 				transparent 2px,
@@ -200,7 +203,9 @@
 		border-radius: 50%;
 		background: rgba(30, 58, 138, 0.2);
 		transform: translate(-50%, -50%);
-		transition: width 0.6s, height 0.6s;
+		transition:
+			width 0.6s,
+			height 0.6s;
 	}
 
 	.nav-button:hover::before {
@@ -223,7 +228,6 @@
 		background: var(--primary-blue-light);
 		box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
 	}
-
 
 	@media (max-width: 768px) {
 		.logo {
