@@ -25,7 +25,18 @@
 	<link rel="alternate icon" href="/favicon.ico" />
 </svelte:head>
 
-<ScrollProgress />
-{@render children()}
-<Footer />
-<BackToTop />
+<div class="main-layout base-grid">
+	<ScrollProgress />
+	<main class="main-content base-grid">
+		{@render children()}
+	</main>
+	<Footer />
+	<BackToTop />
+</div>
+
+<style>
+	.main-content {
+		grid-column: 1 / -1;
+		grid-row: 1 / -2;
+	}
+</style>

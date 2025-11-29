@@ -185,6 +185,8 @@
 <section class="services" class:has-selection={hasSelection} id="services" bind:this={sectionRef}>
 	<div class="container">
 		<!-- Title only shown when no selection -->
+<section class="services base-grid" id="services" bind:this={sectionRef}>
+	<div class="container base-grid">
 		<h2 class="section-title">
 			{#if servicesVisible}
 				<span> What We Do </span>
@@ -249,31 +251,30 @@
 
 <style lang="scss">
 	.services {
+		--top-space: 30rem;
+		--bottom-space: 30rem;
+
 		min-height: 100vh;
-		padding: var(--spacing-3xl) var(--spacing-xl);
 		background: var(--background-dark);
-		border-bottom: 2px solid var(--primary-blue);
-		display: flex;
-		align-items: center;
+		grid-template-rows: var(--top-space) auto var(--bottom-space);
 
-		/*&.has-selection {
-			align-items: flex-start;
-			padding-top: var(--spacing-2xl);
-		}*/
+		grid-column: 1 / -1;
 
-		@media (max-width: 768px) {
-			padding: var(--spacing-2xl) var(--spacing-lg);
-
-			&.has-selection {
-				padding-top: var(--spacing-lg);
-			}
+		@media (min-width: 767px) {
+			--top-space: 15rem;
+			--bottom-space: 15rem;
 		}
 	}
 
 	.container {
-		max-width: 1400px;
-		margin: 0 auto;
-		width: 100%;
+		grid-template-rows: minmax(5rem, 10rem) auto;
+		grid-column: 1 / -1;
+		grid-row: 2;
+
+		@media (min-width: 767px) {
+			grid-template-rows: var(--top-space) auto;
+			grid-row: 1 / span 2;
+		}
 	}
 
 	.section-title {
@@ -284,8 +285,25 @@
 		font-weight: 700;
 		text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
 
-		@media (max-width: 768px) {
-			font-size: clamp(2.8rem, 6vw, 3.6rem);
+		grid-column: 1 / -1;
+		justify-self: center;
+		align-self: center;
+	}
+
+	.services-grid {
+		--card-size: 30rem;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(var(--card-size), 1fr));
+		grid-template-rows: repeat(auto-fit, 30rem);
+		gap: var(--spacing-2xl);
+
+		grid-column: 2 / -2;
+		@media (min-width: 1211px) {
+			--card-size: 35rem;
+		}
+
+		@media (min-width: 1550px) {
+			grid-column: 3 / -3;
 		}
 	}
 

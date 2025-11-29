@@ -112,6 +112,8 @@
 		padding: var(--section-padding) var(--spacing-lg);
 		background: var(--background-dark);
 		text-align: center;
+
+		grid-column: 1 / -1;
 	}
 
 	.container {
@@ -202,7 +204,9 @@
 		border-radius: 50%;
 		background: rgba(30, 58, 138, 0.2);
 		transform: translate(-50%, -50%);
-		transition: width 0.6s, height 0.6s;
+		transition:
+			width 0.6s,
+			height 0.6s;
 	}
 
 	.contact-button:hover::before {

@@ -79,6 +79,8 @@
 		padding: var(--section-padding) var(--spacing-lg);
 		background: var(--background-dark-alt);
 		border-bottom: 2px solid var(--primary-blue);
+
+		grid-column: 1 / -1;
 	}
 
 	.container {
