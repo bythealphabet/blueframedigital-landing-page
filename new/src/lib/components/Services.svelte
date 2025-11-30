@@ -137,10 +137,10 @@
 			document.body.style.overflow = 'hidden';
 			document.body.style.paddingRight = `${scrollbarWidth}px`;
 
-			// Scroll to position title at top with small space
+			// Scroll to position title at top with comfortable spacing
 			if (titleRef) {
 				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
-				const targetScroll = titleTop - 40; // 40px space from top
+				const targetScroll = titleTop - 60; // 60px space from top for comfortable spacing
 
 				window.scrollTo({
 					top: targetScroll,
@@ -151,6 +151,17 @@
 			// Unlock scroll
 			document.body.style.overflow = '';
 			document.body.style.paddingRight = '';
+			
+			// When deselecting, scroll to position title at top with comfortable spacing
+			if (titleRef) {
+				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
+				const targetScroll = titleTop - 60; // 60px space from top for comfortable spacing
+
+				window.scrollTo({
+					top: targetScroll,
+					behavior: 'smooth'
+				});
+			}
 		}
 	});
 
