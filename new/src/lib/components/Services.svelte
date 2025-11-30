@@ -24,6 +24,8 @@
 	let servicesVisible = $state(false);
 	let sectionRef: HTMLElement;
 	let isMobile = $state(false);
+	let scrollY = $state(0);
+	let titleRef: HTMLElement;
 
 	// Setup crossfade with 3D transforms for card transitions
 	const [send, receive] = crossfade({
@@ -66,6 +68,12 @@
 		checkMobile();
 		window.addEventListener('resize', checkMobile);
 
+		// Track scroll position
+		const handleScroll = () => {
+			scrollY = window.scrollY;
+		};
+		window.addEventListener('scroll', handleScroll);
+
 		// Setup intersection observer for scroll-triggered visibility
 		const observer = new IntersectionObserver(
 			([entry]) => {
@@ -90,6 +98,7 @@
 				observer.unobserve(sectionRef);
 			}
 			window.removeEventListener('resize', checkMobile);
+			window.removeEventListener('scroll', handleScroll);
 		};
 	});
 
@@ -105,6 +114,33 @@
 			unsubPhase();
 			unsubStates();
 		};
+	});
+
+	// Handle scroll locking and auto-scroll when selection changes
+	$effect(() => {
+		if (typeof window === 'undefined') return;
+
+		if (hasSelection) {
+			// Lock scroll
+			const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+			document.body.style.overflow = 'hidden';
+			document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+			// Scroll to position title at top with small space
+			if (titleRef) {
+				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
+				const targetScroll = titleTop - 40; // 40px space from top
+				
+				window.scrollTo({
+					top: targetScroll,
+					behavior: 'smooth'
+				});
+			}
+		} else {
+			// Unlock scroll
+			document.body.style.overflow = '';
+			document.body.style.paddingRight = '';
+		}
 	});
 
 	// Get card animation state from coordinator
@@ -172,7 +208,7 @@
 	class:has-selection={hasSelection}
 >
 	<div class="container base-grid">
-		<h2 class="section-title">
+		<h2 class="section-title" class:section-title--compact={hasSelection} bind:this={titleRef}>
 			{#if servicesVisible}
 				<span> What We Do </span>
 			{/if}
@@ -247,9 +283,23 @@
 
 		grid-column: 1 / -1;
 
+		&.has-selection {
+			/* When selected, allow scrolling within the locked body */
+			grid-template-rows: 0 auto 0;
+			padding-top: var(--spacing-xl);
+		}
+
 		@media (min-width: 767px) {
 			--top-space: 15rem;
 			--bottom-space: 15rem;
+		}
+
+		@media (max-width: 768px) {
+			&.has-selection {
+				/* Minimal padding on mobile when selected */
+				padding-top: var(--spacing-lg);
+				min-height: 100vh;
+			}
 		}
 	}
 
@@ -268,6 +318,14 @@
 		@media (min-width: 1211px) {
 			--card-size-h: 35rem;
 		}
+
+		@media (max-width: 768px) {
+			.services.has-selection & {
+				/* Mobile selected state: make room for content below */
+				grid-template-rows: auto auto auto;
+				gap: 0;
+			}
+		}
 	}
 
 	.section-title {
@@ -277,10 +335,18 @@
 		color: var(--primary-blue-bright);
 		font-weight: 700;
 		text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+		transition:
+			font-size 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+			margin-bottom 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
 		grid-column: 1 / -1;
 		justify-self: center;
 		align-self: center;
+	}
+
+	.section-title--compact {
+		font-size: var(--font-size-h3);
+		margin-bottom: var(--spacing-xl);
 	}
 
 	.services-grid {
@@ -300,12 +366,18 @@
 		@media (min-width: 1550px) {
 			grid-column: 3 / -3;
 		}
+
+		@media (max-width: 768px) {
+			grid-column: 1 / -1;
+			padding: 0 var(--spacing-lg);
+		}
 	}
 
 	.has-selection {
 		@media (max-width: 768px) {
-			grid-template-columns: minmax(var(--card-size-w), 1fr);
-			grid-template-rows: var(--card-size-h);
+			grid-template-columns: 1fr;
+			grid-template-rows: auto;
+			gap: 0;
 
 			& > * {
 				grid-column: 1;
@@ -338,6 +410,13 @@
 			min-height: 12rem;
 			max-height: 12rem;
 			grid-template-rows: 12rem;
+
+			@media (max-width: 768px) {
+				/* Mobile: slightly taller for better visibility */
+				min-height: 10rem;
+				max-height: 10rem;
+				grid-template-rows: 10rem;
+			}
 		}
 
 		&.is-exiting {
@@ -354,7 +433,6 @@
 
 	.detail-content-area {
 		z-index: 0;
-		height: 70rem;
 
 		display: grid;
 		grid-template-columns: repeat(3, minmax(var(--card-size-w), 1fr));
@@ -368,8 +446,19 @@
 			grid-column: 3 / -3;
 		}
 
-		@media (min-width: 767px) {
+		@media (max-width: 768px) {
+			/* Mobile: Show below the card */
+			grid-column: 1 / -1;
+			grid-template-columns: 1fr;
+			grid-template-rows: auto;
+			height: auto;
+			min-height: 40rem;
+			margin-top: var(--spacing-lg);
+		}
+
+		@media (min-width: 769px) {
 			grid-row: 2;
+			height: 70rem;
 		}
 	}
 
