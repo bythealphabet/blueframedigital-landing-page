@@ -4,34 +4,85 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { onMount } from 'svelte';
 
-	interface Props {
-		images: string[];
-		text: string;
+	interface WebsiteItem {
+		image: string;
+		description: string;
+		url: string;
 	}
 
-	let { images, text }: Props = $props();
+	interface Props {
+		websites?: WebsiteItem[];
+		// Backward compatibility props
+		images?: string[];
+		text?: string;
+	}
 
-	// Use placeholder images if none provided
-	const displayImages = $derived(
-		images.length > 0
-			? images
-			: [
-					'https://images.unsplash.com/photo-1460317442991-0ec209397118?w=800',
-					'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800',
-					'https://images.unsplash.com/photo-1503602642458-232111445657?w=800'
-				]
-	);
+	let { websites = [], images = [], text = '' }: Props = $props();
 
+	// Default placeholder data with descriptions and URLs
+	// State variables
 	let currentIndex = $state(0);
 	let isAutoPlaying = $state(true);
 	let containerElement: HTMLElement;
+
+	// Default placeholder data with descriptions and URLs
+	const defaultWebsites: WebsiteItem[] = [
+		{
+			image: 'https://images.unsplash.com/photo-1460317442991-0ec209397118?w=800',
+			description: 'High performance, fast loading websites built for speed and user experience',
+			url: '#'
+		},
+		{
+			image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800',
+			description: 'Modern design with the latest technology and best practices',
+			url: '#'
+		},
+		{
+			image: 'https://images.unsplash.com/photo-1503602642458-232111445657?w=800',
+			description: 'Custom website design that fits your style and branding perfectly',
+			url: '#'
+		},
+		{
+			image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800',
+			description: 'Engaging websites that keep users interested and drive conversions',
+			url: '#'
+		}
+	];
+
+	// Individual descriptions for backward compatibility
+	const defaultDescriptions = [
+		'High performance, fast loading websites built for speed and user experience',
+		'Modern design with the latest technology and best practices',
+		'Custom website design that fits your style and branding perfectly',
+		'Engaging websites that keep users interested and drive conversions'
+	];
+
+	// Handle both new format (websites array) and old format (images + text)
+	const displayWebsites = $derived.by(() => {
+		if (websites.length > 0) {
+			return websites;
+		}
+		
+		// Backward compatibility: convert old format to new format
+		if (images.length > 0) {
+			return images.map((img, idx) => ({
+				image: img,
+				description: defaultDescriptions[idx % defaultDescriptions.length],
+				url: '#'
+			}));
+		}
+		
+		return defaultWebsites;
+	});
+
+	const currentWebsite = $derived(displayWebsites[currentIndex]);
 
 	const shouldAnimate = !prefersReducedMotion.current;
 
 	onMount(() => {
 		const interval = setInterval(() => {
-			if (isAutoPlaying && displayImages.length > 1) {
-				currentIndex = (currentIndex + 1) % displayImages.length;
+			if (isAutoPlaying && displayWebsites.length > 1) {
+				currentIndex = (currentIndex + 1) % displayWebsites.length;
 			}
 		}, 5000);
 
@@ -53,7 +104,7 @@
 	}
 
 	function getCardClass(index: number): string {
-		const totalCards = displayImages.length;
+		const totalCards = displayWebsites.length;
 		if (index === currentIndex) return 'active';
 
 		// Calculate relative position
@@ -75,7 +126,7 @@
 >
 	<div class="carousel-container">
 		<div class="cards">
-			{#each displayImages as image, i (i)}
+			{#each displayWebsites as website, i (i)}
 				{@const cardClass = getCardClass(i)}
 				<button
 					class="card {cardClass}"
@@ -83,15 +134,15 @@
 					aria-label="View website {i + 1}"
 					tabindex={cardClass === 'active' ? 0 : -1}
 				>
-					<img src={image} alt="Website example {i + 1}" loading="lazy" />
+					<img src={website.image} alt="Website example {i + 1}" loading="lazy" />
 				</button>
 			{/each}
 		</div>
 
-		{#if displayImages.length > 1}
+		{#if displayWebsites.length > 1}
 			<div class="controls" transition:fade={{ delay: 400 }}>
 				<div class="dots">
-					{#each displayImages as _, i}
+					{#each displayWebsites as _, i}
 						<button
 							class="dot"
 							class:active={i === currentIndex}
@@ -106,14 +157,39 @@
 		{/if}
 	</div>
 
-	{#if text}
+	{#key currentIndex}
 		<div
-			class="showcase-text"
-			transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 300, easing: quintOut }}
+			class="showcase-content"
+			transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 150, easing: quintOut }}
 		>
-			<p>{text}</p>
+			<p class="description">{currentWebsite.description}</p>
+			{#if currentWebsite.url && currentWebsite.url !== '#'}
+				<a
+					href={currentWebsite.url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="cta-button"
+				>
+					<span>View Live Website</span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+						<polyline points="15 3 21 3 21 9"></polyline>
+						<line x1="10" y1="14" x2="21" y2="3"></line>
+					</svg>
+				</a>
+			{/if}
 		</div>
-	{/if}
+	{/key}
 </div>
 
 <style lang="scss">
@@ -318,8 +394,9 @@
 		box-shadow: 0 0 12px rgba(96, 165, 250, 0.8);
 	}
 
-	.showcase-text {
+	.showcase-content {
 		max-width: 800px;
+		width: 100%;
 		margin: 0 auto;
 		text-align: center;
 		padding: var(--spacing-xl);
@@ -327,13 +404,96 @@
 		border: 1px solid var(--primary-blue);
 		border-radius: var(--radius-sm);
 		backdrop-filter: blur(5px);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--spacing-lg);
 	}
 
-	.showcase-text p {
+	.description {
 		color: var(--text-secondary);
 		font-size: var(--font-size-lg);
 		line-height: var(--line-height-relaxed);
 		margin: 0;
+	}
+
+	.cta-button {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-sm);
+		padding: var(--spacing-md) var(--spacing-xl);
+		background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+		color: white;
+		text-decoration: none;
+		border-radius: var(--radius-sm);
+		font-weight: 600;
+		font-size: var(--font-size-base);
+		transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+		border: 1px solid var(--primary-blue-bright);
+		box-shadow: 0 4px 20px rgba(96, 165, 250, 0.3);
+
+		&:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 8px 30px rgba(96, 165, 250, 0.5);
+			background: linear-gradient(135deg, var(--primary-blue-bright) 0%, var(--primary-blue) 100%);
+		}
+
+		&:active {
+			transform: translateY(0);
+		}
+
+		&:focus {
+			outline: 2px solid var(--primary-blue-bright);
+			outline-offset: 3px;
+		}
+
+		svg {
+			transition: transform 0.3s ease;
+		}
+
+		&:hover svg {
+			transform: translate(2px, -2px);
+		}
+	}
+
+	// Responsive breakpoints
+	// Hide content on very small screens (< 375px - smaller than iPhone SE)
+	@media (max-width: 374px) {
+		.showcase-content {
+			display: none;
+		}
+	}
+
+	// Show content but adjust on small screens (375px - 389px, iPhone SE)
+	@media (min-width: 375px) and (max-width: 389px) {
+		.showcase-content {
+			padding: var(--spacing-md);
+			gap: var(--spacing-md);
+		}
+
+		.description {
+			font-size: var(--font-size-sm);
+		}
+
+		.cta-button {
+			padding: var(--spacing-sm) var(--spacing-lg);
+			font-size: var(--font-size-sm);
+		}
+	}
+
+	// iPhone 12 and similar (390px+)
+	@media (min-width: 390px) and (max-width: 768px) {
+		.showcase-content {
+			padding: var(--spacing-lg);
+		}
+
+		.description {
+			font-size: var(--font-size-base);
+		}
+
+		.cta-button {
+			padding: var(--spacing-md) var(--spacing-lg);
+		}
 	}
 
 	@media (max-width: 768px) {
@@ -344,15 +504,6 @@
 
 		.carousel-container {
 			gap: var(--spacing-lg);
-		}
-
-		.showcase-text {
-			padding: var(--spacing-lg);
-			visibility: hidden;
-		}
-
-		.showcase-text p {
-			font-size: var(--font-size-base);
 		}
 	}
 </style>

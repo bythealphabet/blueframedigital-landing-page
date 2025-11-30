@@ -115,6 +115,12 @@
 		grid-column: 1 / -1;
 		grid-row: 1 / -1;
 		overflow: hidden;
+
+
+		@media (min-width: 767px) {
+
+            padding: var(--spacing-lg);
+        }
 	}
 
 	.detail-content-grid__carousel {

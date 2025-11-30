@@ -26,6 +26,7 @@
 	let isMobile = $state(false);
 	let scrollY = $state(0);
 	let titleRef: HTMLElement;
+	let previousHasSelection = $state(false);
 
 	// Create crossfade function that returns dynamic duration based on viewport
 	function createCrossfade() {
@@ -152,8 +153,9 @@
 			document.body.style.overflow = '';
 			document.body.style.paddingRight = '';
 			
-			// When deselecting, scroll to position title at top with comfortable spacing
-			if (titleRef) {
+			// Only scroll when transitioning from selected to unselected (actual deselection)
+			// Not when component first loads with no selection
+			if (previousHasSelection && titleRef) {
 				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
 				const targetScroll = titleTop - 60; // 60px space from top for comfortable spacing
 
@@ -163,6 +165,9 @@
 				});
 			}
 		}
+
+		// Update previous state for next effect run
+		previousHasSelection = hasSelection;
 	});
 
 	// Get card animation state from coordinator
