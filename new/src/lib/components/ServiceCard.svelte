@@ -2,15 +2,20 @@
 	import { onMount } from 'svelte';
 	import { fly, fade, scale } from 'svelte/transition';
 	import { quintOut, elasticOut } from 'svelte/easing';
+	import { goto } from '$app/navigation';
+	import { prefersReducedMotion as reducedMotionStore } from 'svelte/motion';
+	import type { Service } from '$lib/data/services';
+	import type { CardAnimationState } from '$lib/animations/animationCoordinator';
 
 	interface Props {
-		title: string;
-		description: string;
-		icon: string;
+		service: Service;
+		isSelected?: boolean;
+		cardState?: CardAnimationState | null;
 		delay?: number;
+		onclick?: () => void;
 	}
 
-	let { title, description, icon, delay = 0 }: Props = $props();
+	let { service, isSelected = false, cardState = null, delay = 0, onclick }: Props = $props();
 
 	let visible = $state(false);
 	let element: HTMLDivElement;
@@ -22,12 +27,12 @@
 	let rotateX = $state(0);
 	let rotateY = $state(0);
 
-	// Check if animations should be reduced
-	const prefersReducedMotion =
-		typeof window !== 'undefined'
-			? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-			: false;
-	const shouldAnimate = !prefersReducedMotion;
+	// Respect reduced motion preference
+	const shouldAnimate = $derived(!reducedMotionStore.current);
+
+	// Derived states from cardState
+	const isExiting = $derived(cardState?.phase === 'exiting');
+	const exitDelay = $derived(cardState?.exitDelay || 0);
 
 	onMount(() => {
 		const observer = new IntersectionObserver(
@@ -48,7 +53,7 @@
 	});
 
 	function handleMouseMove(e: MouseEvent) {
-		if (!element || !shouldAnimate) return;
+		if (!element || !shouldAnimate || isSelected || isExiting) return;
 
 		const rect = element.getBoundingClientRect();
 		const x = e.clientX - rect.left;
@@ -71,53 +76,93 @@
 	}
 
 	function handleMouseEnter() {
-		isHovered = true;
+		if (!isSelected && !isExiting) {
+			isHovered = true;
+		}
+	}
+
+	function handleClick() {
+		if (onclick) {
+			onclick();
+		} else if (service.slug && !isSelected) {
+			goto(`/services/${service.slug}`);
+		}
+	}
+
+	// 3D depth exit animation
+	function exitAnimation(node: HTMLElement, { delay }: { delay: number }) {
+		return {
+			delay,
+			duration: 400,
+			css: (t: number) => {
+				const eased = quintOut(t);
+				return `
+					opacity: ${eased};
+					transform:
+						perspective(1000px)
+						scale(${1 - 0.5 * (1 - eased)})
+						translateZ(${-500 * (1 - eased)}px)
+						rotateX(${-15 * (1 - eased)}deg);
+				`;
+			}
+		};
 	}
 </script>
 
-<div
-	bind:this={element}
-	class="service-card-container"
-	style="--delay: {delay}ms"
-	role="article"
->
-	{#if visible}
-		<div
-			class="service-card"
-			class:hovered={isHovered}
-			onmousemove={handleMouseMove}
-			onmouseleave={handleMouseLeave}
-			onmouseenter={handleMouseEnter}
-			transition:fly={{ y: shouldAnimate ? 60 : 0, duration: 800, delay, easing: quintOut }}
-			style="transform: perspective(1000px) rotateX({rotateX}deg) rotateY({rotateY}deg)"
-			role="article"
-		>
-			<div class="service-icon" class:pulse={isHovered}>
-				<i data-lucide={icon}></i>
+<div bind:this={element} class="service-card-container" style="--delay: {delay}ms" role="article">
+	<button
+		class="service-card"
+		class:hovered={isHovered}
+		class:selected={isSelected}
+		class:clickable={!!service.slug || !!onclick}
+		onmousemove={handleMouseMove}
+		onmouseleave={handleMouseLeave}
+		onmouseenter={handleMouseEnter}
+		onclick={handleClick}
+		in:fly={{ y: shouldAnimate ? 60 : 0, duration: 800, delay, easing: quintOut }}
+		style="transform: perspective(1000px) rotateX({rotateX}deg) rotateY({rotateY}deg)"
+		tabindex={service.slug || onclick ? 0 : -1}
+		aria-label={isSelected
+			? `${service.title} selected. Click to return to all services.`
+			: `View details about ${service.title}`}
+		aria-pressed={isSelected}
+	>
+		<span class="service-icon" class:pulse={isHovered && !isSelected}>
+			<i data-lucide={service.icon}></i>
+		</span>
+
+		<h3 transition:fade={{ duration: 600, delay: delay + 200 }}>
+			{service.title}
+		</h3>
+
+		<p transition:fade={{ duration: 600, delay: delay + 400 }}>
+			{service.description}
+		</p>
+
+		{#if isSelected}
+			<div class="selected-indicator" transition:scale={{ duration: 300, easing: elasticOut }}>
+				<i data-lucide="check-circle"></i>
 			</div>
+		{/if}
 
-			<h3 transition:fade={{ duration: 600, delay: delay + 200 }}>
-				{title}
-			</h3>
-
-			<p transition:fade={{ duration: 600, delay: delay + 400 }}>
-				{description}
-			</p>
-
-			{#if isHovered && shouldAnimate}
-				<div
-					class="spotlight"
-					transition:scale={{ duration: 300, easing: elasticOut }}
-					style="left: {mouseX}px; top: {mouseY}px"
-				></div>
-			{/if}
-		</div>
-	{/if}
+		{#if isHovered && shouldAnimate && !isSelected}
+			<span
+				class="spotlight"
+				transition:scale={{ duration: 300, easing: elasticOut }}
+				style="left: {mouseX}px; top: {mouseY}px"
+			></span>
+		{/if}
+	</button>
 </div>
 
 <style>
 	.service-card-container {
 		perspective: 1000px;
+		position: relative;
+		height: 100%;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 1fr 1fr;
 	}
 
 	.service-card {
@@ -129,9 +174,40 @@
 		overflow: hidden;
 		transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 		transform-style: preserve-3d;
-		will-change: transform;
+		will-change: transform, opacity;
 		height: 100%;
+		width: 100%;
+		text-align: left;
+		font-family: inherit;
+		font-size: inherit;
+		color: inherit;
+
+		grid-column: 1 / -1;
+		grid-row: 1 / -1;
 	}
+
+	.service-card.clickable {
+		cursor: pointer;
+	}
+
+	.service-card.selected {
+		cursor: pointer;
+		border-color: var(--primary-blue-bright);
+		box-shadow: 0 0 40px rgba(96, 165, 250, 0.5);
+		background: linear-gradient(135deg, var(--background-card) 0%, rgba(37, 99, 235, 0.05) 100%);
+		transform-style: preserve-3d;
+		backface-visibility: hidden;
+		/* Maintain exact original dimensions */
+		max-height: 100%;
+		overflow: hidden;
+	}
+
+	/*.service-card.exiting {
+		pointer-events: none;
+		user-select: none;
+		grid-column: 1 / -1;
+		grid-row: 1 / -1;
+	}*/
 
 	.service-card::before {
 		content: '';
@@ -152,14 +228,15 @@
 		transition: opacity 0.3s ease;
 	}
 
-	.service-card.hovered {
+	.service-card.hovered::before,
+	.service-card.selected::before {
+		opacity: 0;
+	}
+
+	.service-card.hovered:not(.selected) {
 		border-color: var(--primary-blue-light);
 		box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4);
 		transform: translateZ(20px);
-	}
-
-	.service-card.hovered::before {
-		opacity: 0;
 	}
 
 	.service-icon {
@@ -171,7 +248,7 @@
 	}
 
 	.service-icon.pulse {
-		animation: pulse 0.6s ease-in-out;
+		/* animation: pulse 0.6s ease-in-out; */
 		color: var(--primary-blue-light);
 		filter: drop-shadow(0 0 20px var(--primary-blue-bright));
 	}
@@ -199,6 +276,19 @@
 		transform: translateZ(5px);
 	}
 
+	.selected-indicator {
+		position: absolute;
+		top: var(--spacing-sm);
+		right: var(--spacing-sm);
+		color: var(--primary-blue-bright);
+		filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.8));
+	}
+
+	.selected-indicator i {
+		width: 24px;
+		height: 24px;
+	}
+
 	.spotlight {
 		position: absolute;
 		width: 200px;
@@ -222,8 +312,14 @@
 		transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
-	.service-card.hovered::after {
+	.service-card.hovered:not(.selected)::after {
 		transform: translateX(100%);
+	}
+
+	/* Performance optimizations */
+	.service-card {
+		transform: translateZ(0);
+		backface-visibility: hidden;
 	}
 
 	@media (max-width: 768px) {
@@ -231,7 +327,7 @@
 			transition-duration: 0.6s;
 		}
 
-		.service-card.hovered {
+		.service-card.hovered:not(.selected) {
 			transform: translateY(-8px);
 		}
 
@@ -244,5 +340,23 @@
 		.spotlight {
 			display: none;
 		}
+
+		.service-card.selected {
+			/* Compact mode for mobile */
+			padding: var(--spacing-md);
+		}
+
+		/*.service-card.selected h3 {
+			font-size: var(--font-size-base);
+			margin-bottom: var(--spacing-xs);
+		}*/
+
+		/*.service-card.selected p {
+			font-size: var(--font-size-sm);
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}*/
 	}
 </style>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <rect width="600" height="450" fill="#0c4a6e"/>
+  <rect x="50" y="300" width="500" height="100" fill="#1e293b"/>
+  <rect x="80" y="120" width="220" height="180" fill="#475569"/>
+  <rect x="320" y="100" width="220" height="200" fill="#475569"/>
+  <rect x="100" y="150" width="60" height="80" fill="#60a5fa" opacity="0.8"/>
+  <rect x="180" y="150" width="60" height="80" fill="#60a5fa" opacity="0.8"/>
+  <rect x="340" y="130" width="60" height="80" fill="#60a5fa" opacity="0.8"/>
+  <rect x="420" y="130" width="60" height="80" fill="#60a5fa" opacity="0.8"/>
+  <circle cx="480" cy="140" r="35" fill="#fbbf24" opacity="0.9"/>
+  <text x="300" y="420" font-family="Arial, sans-serif" font-size="22" fill="#60a5fa" text-anchor="middle" font-weight="bold">Villa Construction</text>
+</svg>
+

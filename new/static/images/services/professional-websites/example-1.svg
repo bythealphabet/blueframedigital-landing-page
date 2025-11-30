@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#1e3a8a"/>
+  <rect x="50" y="50" width="700" height="500" fill="#1f2937" rx="8"/>
+  <circle cx="80" cy="85" r="8" fill="#ef4444"/>
+  <circle cx="110" cy="85" r="8" fill="#fbbf24"/>
+  <circle cx="140" cy="85" r="8" fill="#10b981"/>
+  <rect x="70" y="120" width="660" height="60" fill="#3b82f6" opacity="0.3" rx="4"/>
+  <rect x="70" y="200" width="300" height="200" fill="#60a5fa" opacity="0.5" rx="4"/>
+  <rect x="390" y="200" width="340" height="90" fill="#60a5fa" opacity="0.3" rx="4"/>
+  <rect x="390" y="310" width="340" height="90" fill="#60a5fa" opacity="0.3" rx="4"/>
+  <text x="400" y="280" font-family="Arial, sans-serif" font-size="32" fill="#60a5fa" font-weight="bold">Professional</text>
+  <text x="400" y="320" font-family="Arial, sans-serif" font-size="32" fill="#60a5fa" font-weight="bold">Website Design</text>
+</svg>
+

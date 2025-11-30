@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <rect width="600" height="450" fill="#0c4a6e"/>
+  <rect x="50" y="300" width="500" height="100" fill="#334155"/>
+  <rect x="100" y="150" width="180" height="150" fill="#475569"/>
+  <rect x="320" y="120" width="180" height="180" fill="#475569"/>
+  <rect x="120" y="180" width="50" height="70" fill="#60a5fa" opacity="0.8"/>
+  <rect x="190" y="180" width="50" height="70" fill="#60a5fa" opacity="0.8"/>
+  <rect x="340" y="150" width="50" height="70" fill="#60a5fa" opacity="0.8"/>
+  <rect x="410" y="150" width="50" height="70" fill="#60a5fa" opacity="0.8"/>
+  <text x="300" y="420" font-family="Arial, sans-serif" font-size="24" fill="#60a5fa" text-anchor="middle" font-weight="bold">Commercial Building</text>
+</svg>
+
