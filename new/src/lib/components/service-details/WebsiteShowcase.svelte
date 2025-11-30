@@ -42,7 +42,10 @@
 	}
 </script>
 
-<div class="showcase" transition:fly={{ y: shouldAnimate ? 40 : 0, duration: 600, easing: quintOut }}>
+<div
+	class="showcase"
+	transition:fly={{ y: shouldAnimate ? 40 : 0, duration: 600, easing: quintOut }}
+>
 	<div class="carousel">
 		<button class="carousel-button prev" onclick={prevSlide} aria-label="Previous image">
 			<i data-lucide="chevron-left"></i>
@@ -57,12 +60,11 @@
 				{/if}
 			{/each}
 		</div>
-
 		<button class="carousel-button next" onclick={nextSlide} aria-label="Next image">
 			<i data-lucide="chevron-right"></i>
 		</button>
 
-		<div class="carousel-dots">
+		<!-- <div class="carousel-dots">
 			{#each images as _, i}
 				<button
 					class="dot"
@@ -71,12 +73,15 @@
 					aria-label="Go to slide {i + 1}"
 				></button>
 			{/each}
-		</div>
+		</div> -->
 	</div>
 
-	<div class="showcase-text" transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 300, easing: quintOut }}>
+	<!-- <div
+		class="showcase-text"
+		transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 300, easing: quintOut }}
+	>
 		<p>{text}</p>
-	</div>
+	</div> -->
 </div>
 
 <style>
@@ -206,4 +211,3 @@
 		}
 	}
 </style>
-

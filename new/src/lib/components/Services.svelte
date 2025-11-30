@@ -401,7 +401,6 @@
 	.detail-content-area {
 		z-index: 0;
 		height: 70rem;
-		border: solid 1px lime;
 
 		display: grid;
 		grid-template-columns: repeat(3, minmax(var(--card-size-w), 1fr));
@@ -413,6 +412,10 @@
 
 		@media (min-width: 1550px) {
 			grid-column: 3 / -3;
+		}
+
+		@media (min-width: 767px) {
+			grid-row: 2;
 		}
 	}
 
