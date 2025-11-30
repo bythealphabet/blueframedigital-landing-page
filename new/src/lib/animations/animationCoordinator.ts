@@ -60,7 +60,7 @@ function createAnimationCoordinator() {
 
 			// Progress through animation phases - synced with 3D elevation (800ms)
 			setTimeout(() => phase.set('positioning'), 0);
-			setTimeout(() => phase.set('exiting'), 150);
+			setTimeout(() => phase.set('exiting'), 100);
 			setTimeout(() => phase.set('repositioning'), 250);
 			setTimeout(() => phase.set('revealing'), 900);
 			setTimeout(() => phase.set('complete'), 1000);
@@ -113,4 +113,3 @@ function createAnimationCoordinator() {
 }
 
 export const animationCoordinator = createAnimationCoordinator();
-

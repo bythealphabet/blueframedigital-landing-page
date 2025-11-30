@@ -23,21 +23,27 @@
 	<!-- Detail content based on service type -->
 	<div class="detail-wrapper" transition:fade={{ duration: 400 }}>
 		{#if service.detailContent.type === 'carousel'}
-			<div transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}>
-				<WebsiteShowcase
+			<div
+				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+			>
+				<!-- <WebsiteShowcase
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
-				/>
+				/> -->
 			</div>
 		{:else if service.detailContent.type === 'gallery'}
-			<div transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}>
+			<div
+				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+			>
 				<ProjectGallery
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
 				/>
 			</div>
 		{:else if service.detailContent.type === 'text-icon'}
-			<div transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}>
+			<div
+				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+			>
 				<LeadGenInfo
 					text={service.detailContent.text || ''}
 					features={service.detailContent.features || []}
@@ -45,7 +51,9 @@
 				/>
 			</div>
 		{:else if service.detailContent.type === 'phone-mockup'}
-			<div transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}>
+			<div
+				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+			>
 				<MobileDesignDemo
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
@@ -53,7 +61,9 @@
 				/>
 			</div>
 		{:else if service.detailContent.type === 'search-visual'}
-			<div transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}>
+			<div
+				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+			>
 				<SEOExplainer
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
@@ -61,7 +71,9 @@
 				/>
 			</div>
 		{:else if service.detailContent.type === 'support-info'}
-			<div transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}>
+			<div
+				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+			>
 				<SupportInfo
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
@@ -72,10 +84,7 @@
 	</div>
 
 	<!-- Additional hint text for mobile users -->
-	<div
-		class="interaction-hint"
-		transition:fade={{ duration: 400, delay: 600 }}
-	>
+	<div class="interaction-hint" transition:fade={{ duration: 400, delay: 600 }}>
 		<p>Click the card above to return to all services</p>
 	</div>
 </div>
@@ -132,4 +141,3 @@
 		}
 	}
 </style>
-

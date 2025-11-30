@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fly, fade, crossfade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 	import { flip } from 'svelte/animate';
 	import { quintOut } from 'svelte/easing';
 	import { prefersReducedMotion as reducedMotionStore } from 'svelte/motion';
@@ -10,8 +11,11 @@
 	import { animationCoordinator } from '$lib/animations/animationCoordinator';
 	import DetailContentGrid from './service-details/DetailContentGrid.svelte';
 
-	// Local state for selection - no navigation needed
-	let selectedSlug = $state<string | null>(null);
+	// Accept optional selectedSlug prop from parent (e.g., from URL routing)
+	let { selectedSlug: initialSlug = null }: { selectedSlug?: string | null } = $props();
+
+	// Local state for selection - initialized from prop if provided
+	let selectedSlug = $state<string | null>(initialSlug);
 
 	let servicesVisible = $state(false);
 	let sectionRef: HTMLElement;
@@ -21,9 +25,9 @@
 	const [send, receive] = crossfade({
 		duration: 800,
 		easing: quintOut,
-		fallback(node) {
+		fallback() {
 			return {
-				duration: 600,
+				duration: 300,
 				easing: quintOut,
 				css: (t) => `
 					opacity: ${t};
@@ -54,31 +58,31 @@
 	let cardStatesMap = $state(new Map());
 
 	// Custom 3D elevation transition for selected card
-	function elevatedFlip(
-		node: HTMLElement,
-		params: { duration: number; easing: (t: number) => number }
-	) {
-		const { duration, easing } = params;
-		return {
-			duration,
-			easing,
-			css: (t: number, u: number) => {
-				const eased = easing(t);
-				// Elevation arc: 0 → 300px → 0
-				const elevation = Math.sin(u * Math.PI) * 300;
-				// Scale slightly during elevation
-				const scale = 1 + Math.sin(u * Math.PI) * 0.1;
-				// Add subtle rotation
-				const rotateX = Math.sin(u * Math.PI) * 5;
+	// function elevatedFlip(
+	// 	node: HTMLElement,
+	// 	params: { duration: number; easing: (t: number) => number }
+	// ) {
+	// 	const { duration, easing } = params;
+	// 	return {
+	// 		duration,
+	// 		easing,
+	// 		css: (t: number, u: number) => {
+	// 			const eased = easing(t);
+	// 			// Elevation arc: 0 → 300px → 0
+	// 			const elevation = Math.sin(u * Math.PI) * 300;
+	// 			// Scale slightly during elevation
+	// 			const scale = 1 + Math.sin(u * Math.PI) * 0.1;
+	// 			// Add subtle rotation
+	// 			const rotateX = Math.sin(u * Math.PI) * 5;
 
-				return `
-					transform: perspective(1500px) translateZ(${elevation}px) scale(${scale}) rotateX(${rotateX}deg);
-					z-index: ${u > 0.01 ? 100 : 1};
-					box-shadow: 0 ${elevation / 3}px ${elevation}px rgba(0, 0, 0, ${0.3 * Math.sin(u * Math.PI)});
-				`;
-			}
-		};
-	}
+	// 			return `
+	// 				transform: perspective(1500px) translateZ(${elevation}px) scale(${scale}) rotateX(${rotateX}deg);
+	// 				z-index: ${u > 0.01 ? 100 : 1};
+	// 				box-shadow: 0 ${elevation / 3}px ${elevation}px rgba(0, 0, 0, ${0.3 * Math.sin(u * Math.PI)});
+	// 			`;
+	// 		}
+	// 	};
+	// }
 
 	onMount(() => {
 		const unsubPhase = animationCoordinator.phase.subscribe((value) => {
@@ -122,7 +126,7 @@
 				);
 			}
 			selectedSlug = slug;
-			console.log('Deselecting card:', selectedSlug);
+
 			// Trigger selection animation
 			animationCoordinator.selectCard(
 				slug,
@@ -141,6 +145,7 @@
 		window.addEventListener('resize', checkMobile);
 
 		// Setup intersection observer for scroll-triggered visibility
+
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				// Update visibility store with intersection ratio for hero fade effect
@@ -166,6 +171,37 @@
 			}
 			window.removeEventListener('resize', checkMobile);
 		};
+	});
+
+	onMount(() => {
+		// if (selectedSlug ) {
+		// 	// Deselect - trigger deselection animation
+		// 	//
+		// 	animationCoordinator.deselectCard(
+		// 		selectedSlug,
+		// 		services.map((s) => s.slug)
+		// 	);
+		// 	// Wait for animation phase to complete before clearing selection
+		// 	setTimeout(() => {
+		// 		selectedSlug = null;
+		// 	}, 100);
+		// } else {
+		// 	// Select new card
+		// 	if (selectedSlug) {
+		// 		// Deselect current before selecting new
+		// 		animationCoordinator.deselectCard(
+		// 			selectedSlug,
+		// 			services.map((s) => s.slug)
+		// 		);
+		// 	}
+		// }
+		// Trigger selection animation
+		// if (selectedSlug) {
+		// 	animationCoordinator.selectCard(
+		// 		selectedSlug,
+		// 		services.map((s) => s.slug)
+		// 	);
+		// }
 	});
 
 	// Handle keyboard navigation
@@ -224,22 +260,22 @@
 					{/if}
 				</div>
 			{/each}
-
-			<!-- Detail content appears after animation -->
-			{#if hasSelection && animPhase === 'complete' && selectedService}
-				<div
-					class="detail-content-area"
-					in:fly={{
-						x: shouldAnimate ? 100 : 0,
-						duration: 600,
-						delay: 200,
-						easing: quintOut
-					}}
-				>
-					<DetailContentGrid service={selectedService} />
-				</div>
-			{/if}
 		</div>
+
+		<!-- Detail content appears after animation -->
+		{#if hasSelection && animPhase === 'complete' && selectedService}
+			<div
+				class="detail-content-area"
+				in:fly={{
+					x: shouldAnimate ? 100 : 0,
+					duration: 600,
+					delay: 200,
+					easing: quintOut
+				}}
+			>
+				<DetailContentGrid service={selectedService} />
+			</div>
+		{/if}
 	</div>
 
 	<!-- Screen reader announcements -->
@@ -270,6 +306,8 @@
 	}
 
 	.container {
+		--card-size-h: 30rem;
+		--card-size-w: 30rem;
 		grid-template-rows: minmax(5rem, 10rem) auto;
 		grid-column: 1 / -1;
 		grid-row: 2;
@@ -277,6 +315,10 @@
 		@media (min-width: 767px) {
 			grid-template-rows: var(--top-space) auto;
 			grid-row: 1 / span 2;
+		}
+
+		@media (min-width: 1211px) {
+			--card-size-h: 35rem;
 		}
 	}
 
@@ -294,59 +336,32 @@
 	}
 
 	.services-grid {
-		--card-size: 30rem;
+		z-index: 1;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(var(--card-size), 1fr));
-		grid-template-rows: repeat(auto-fit, 30rem);
+		grid-template-columns: repeat(auto-fit, minmax(var(--card-size-w), 1fr));
+		grid-template-rows: repeat(auto-fit, var(--card-size-h));
 		gap: var(--spacing-2xl);
+		transition: grid-template-columns 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		perspective: 2000px;
+		perspective-origin: center center;
+		transform-style: preserve-3d;
 
 		grid-column: 2 / -2;
-
-		@media (min-width: 1211px) {
-			--card-size: 35rem;
-		}
+		grid-row: 2;
 
 		@media (min-width: 1550px) {
 			grid-column: 3 / -3;
 		}
 	}
 
-	.services-grid {
-		overflow: hidden;
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: repeat(auto-fill, minmax(25rem, 1fr));
-		grid-auto-rows: 25rem;
-		gap: var(--spacing-2xl);
-		align-items: start;
-		transition: grid-template-columns 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-		perspective: 2000px;
-		perspective-origin: center center;
-		transform-style: preserve-3d;
-
-		/*&.has-selection {
-			grid-template-columns: repeat(3, 1fr);
-			grid-auto-rows: 25rem;
-			gap: var(--spacing-xl);
-			align-items: start;
-		}*/
-
-		/* Responsive: 2 columns on tablet */
-		@media (max-width: 1024px) {
-			&:has(.is-selected) {
-				grid-template-columns: repeat(2, 1fr);
-			}
-		}
-
-		/* Responsive: 1 column on mobile */
+	.has-selection {
 		@media (max-width: 768px) {
-			grid-template-columns: 1fr;
-			gap: var(--spacing-xl);
+			grid-template-columns: minmax(var(--card-size-w), 1fr);
+			grid-template-rows: var(--card-size-h);
 
-			&.has-selection {
-				background: salmon !important;
-				grid-template-columns: 1fr;
-				gap: var(--spacing-md);
+			& > * {
+				grid-column: 1;
+				grid-row: 1;
 			}
 		}
 	}
@@ -356,56 +371,48 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		min-height: 25rem;
-		max-height: 25rem;
+		min-height: var(--card-size-h);
 		transform-style: preserve-3d;
 		transform-origin: center center;
+		opacity: 1;
 		transition:
 			transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			z-index 0s;
+		transition: opacity 0.8s ease;
 
 		&.is-selected {
 			grid-column: 1;
 			/* Lock dimensions to prevent stretching */
-			min-height: 25rem;
-			max-height: 25rem;
-			width: 100%;
-		}
-
-		&.is-elevated {
-			z-index: 100;
-			animation: elevateAndMove 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+			min-height: var(--card-size-h);
 		}
 
 		&.is-exiting {
 			pointer-events: none;
-			opacity: 1;
-			/*transition:
-				opacity 0.4s ease-out,
-				transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);*/
+			visibility: hidden;
+			opacity: 0;
 		}
 
 		&.is-hidden {
-			display: none;
+			visibility: hidden;
+			opacity: 0;
 		}
 	}
 
-	@keyframes elevateAndMove {
-		0% {
-			transform: translateZ(0px) scale(1) rotateX(0deg);
-			filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-		}
-		30% {
-			transform: translateZ(200px) scale(1.08) rotateX(5deg);
-			filter: drop-shadow(0 60px 80px rgba(0, 0, 0, 0.3));
-		}
-		70% {
-			transform: translateZ(200px) scale(1.08) rotateX(5deg);
-			filter: drop-shadow(0 60px 80px rgba(0, 0, 0, 0.3));
-		}
-		100% {
-			transform: translateZ(0px) scale(1) rotateX(0deg);
-			filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+	.detail-content-area {
+		z-index: 0;
+		height: 70rem;
+		border: solid 1px lime;
+
+		display: grid;
+		grid-template-columns: repeat(3, minmax(var(--card-size-w), 1fr));
+		grid-template-rows: repeat(2, var(--card-size-h));
+		gap: var(--spacing-2xl);
+
+		grid-column: 2 / -2;
+		grid-row: 3;
+
+		@media (min-width: 1550px) {
+			grid-column: 3 / -3;
 		}
 	}
 
