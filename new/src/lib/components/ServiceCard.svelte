@@ -354,7 +354,8 @@
 	}
 
 	h3 {
-		font-size: var(--font-size-h3);
+		/* Fixed font size to ensure consistent card heights */
+		font-size: 2.4rem;
 		margin-bottom: var(--spacing-md);
 		color: var(--text-secondary);
 		transform: translateZ(10px);
