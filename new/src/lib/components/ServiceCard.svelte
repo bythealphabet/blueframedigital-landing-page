@@ -255,7 +255,7 @@
 	{/if}
 </div>
 
-<style>
+<style lang="scss">
 	.service-card-container {
 		perspective: 1000px;
 		position: relative;
@@ -290,103 +290,128 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
-
 		grid-column: 1;
 		grid-row: 1;
-	}
-
-	.service-card.clickable {
-		cursor: pointer;
-	}
-
-	.service-card.selected {
-		cursor: pointer;
-		border-color: var(--primary-blue-bright);
-		box-shadow: 0 0 40px rgba(96, 165, 250, 0.5);
-		background: linear-gradient(135deg, var(--background-card) 0%, rgba(37, 99, 235, 0.05) 100%);
-		transform-style: preserve-3d;
+		/* Performance optimizations */
+		transform: translateZ(0);
 		backface-visibility: hidden;
-		overflow: hidden;
-		grid-row: 1;
-		align-items: center;
-		justify-content: center;
 
-		/* Compact mode when selected - use gap instead of padding */
-		padding: var(--spacing-md);
-		gap: var(--spacing-sm);
-	}
+		&.clickable {
+			cursor: pointer;
+		}
 
-	/*.service-card.exiting {
-		pointer-events: none;
-		user-select: none;
-		grid-column: 1 / -1;
-		grid-row: 1 / -1;
-	}*/
+		&.selected {
+			cursor: pointer;
+			border-color: var(--primary-blue-bright);
+			box-shadow: 0 0 40px rgba(96, 165, 250, 0.5);
+			background: linear-gradient(135deg, var(--background-card) 0%, rgba(37, 99, 235, 0.05) 100%);
+			transform-style: preserve-3d;
+			backface-visibility: hidden;
+			overflow: hidden;
+			grid-row: 1;
+			align-items: center;
+			justify-content: center;
+			/* Compact mode when selected - use gap instead of padding */
+			padding: var(--spacing-md);
+			gap: var(--spacing-sm);
 
-	.service-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: repeating-linear-gradient(
-			45deg,
-			transparent,
-			transparent 10px,
-			rgba(30, 58, 138, 0.03) 10px,
-			rgba(30, 58, 138, 0.03) 20px
-		);
-		pointer-events: none;
-		opacity: 1;
-		transition: opacity 0.3s ease;
-	}
+			h3 {
+				/*font-size: var(--font-size-base);*/
+				margin: 0;
+			}
 
-	.service-card.hovered::before,
-	.service-card.selected::before {
-		opacity: 0;
-	}
+			p {
+				max-height: 0;
+				opacity: 0;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+			}
 
-	.service-card.hovered:not(.selected) {
-		border-color: var(--primary-blue-light);
-		box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4);
-		transform: translateZ(20px);
-	}
+			&::before {
+				opacity: 0;
+			}
+		}
 
-	h3 {
-		/* Fixed font size to ensure consistent card heights */
-		font-size: 2.4rem;
-		margin-bottom: var(--spacing-md);
-		color: var(--text-secondary);
-		transform: translateZ(10px);
-		transition:
-			font-size 800ms cubic-bezier(0.16, 1, 0.3, 1),
-			margin-bottom 800ms cubic-bezier(0.16, 1, 0.3, 1);
-	}
+		/*.service-card.exiting {
+			pointer-events: none;
+			user-select: none;
+			grid-column: 1 / -1;
+			grid-row: 1 / -1;
+		}*/
 
-	.service-card.selected h3 {
-		/*font-size: var(--font-size-base);*/
-		margin: 0;
-	}
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: repeating-linear-gradient(
+				45deg,
+				transparent,
+				transparent 10px,
+				rgba(30, 58, 138, 0.03) 10px,
+				rgba(30, 58, 138, 0.03) 20px
+			);
+			pointer-events: none;
+			opacity: 1;
+			transition: opacity 0.3s ease;
+		}
 
-	p {
-		color: var(--text-tertiary);
-		line-height: var(--line-height-relaxed);
-		transform: translateZ(5px);
-		transition:
-			max-height 800ms cubic-bezier(0.16, 1, 0.3, 1),
-			opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
-			margin 800ms cubic-bezier(0.16, 1, 0.3, 1);
-		max-height: 500px;
-		opacity: 1;
-	}
+		/* Shimmer effect */
+		&::after {
+			content: '';
+			position: absolute;
+			top: -50%;
+			left: -50%;
+			width: 200%;
+			height: 200%;
+			background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.1), transparent);
+			transform: translateX(-100%);
+			transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		}
 
-	.service-card.selected p {
-		max-height: 0;
-		opacity: 0;
-		margin: 0;
-		padding: 0;
-		overflow: hidden;
+		&.hovered:not(.selected) {
+			border-color: var(--primary-blue-light);
+			box-shadow: 0 20px 60px rgba(37, 99, 235, 0.4);
+			transform: translateZ(20px);
+
+			&::before {
+				opacity: 0;
+			}
+
+			&::after {
+				transform: translateX(100%);
+			}
+
+			@media (max-width: 768px) {
+				transform: translateY(-8px);
+			}
+		}
+
+		h3 {
+			/* Fixed font size to ensure consistent card heights */
+			font-size: 2.4rem;
+			margin-bottom: var(--spacing-md);
+			color: var(--text-secondary);
+			transform: translateZ(10px);
+			transition:
+				font-size 800ms cubic-bezier(0.16, 1, 0.3, 1),
+				margin-bottom 800ms cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		p {
+			color: var(--text-tertiary);
+			line-height: var(--line-height-relaxed);
+			transform: translateZ(5px);
+			transition:
+				max-height 800ms cubic-bezier(0.16, 1, 0.3, 1),
+				opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+				margin 800ms cubic-bezier(0.16, 1, 0.3, 1);
+			max-height: 500px;
+			opacity: 1;
+		}
 	}
 
 	.spotlight {
@@ -397,34 +422,5 @@
 		transform: translate(-50%, -50%);
 		pointer-events: none;
 		z-index: 0;
-	}
-
-	/* Shimmer effect */
-	.service-card::after {
-		content: '';
-		position: absolute;
-		top: -50%;
-		left: -50%;
-		width: 200%;
-		height: 200%;
-		background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.1), transparent);
-		transform: translateX(-100%);
-		transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	.service-card.hovered:not(.selected)::after {
-		transform: translateX(100%);
-	}
-
-	/* Performance optimizations */
-	.service-card {
-		transform: translateZ(0);
-		backface-visibility: hidden;
-	}
-
-	@media (max-width: 768px) {
-		.service-card.hovered:not(.selected) {
-			transform: translateY(-8px);
-		}
 	}
 </style>

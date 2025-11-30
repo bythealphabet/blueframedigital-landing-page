@@ -27,21 +27,30 @@
 	let scrollY = $state(0);
 	let titleRef: HTMLElement;
 
-	// Setup crossfade with 3D transforms for card transitions
-	const [send, receive] = crossfade({
-		duration: 800,
-		easing: quintOut,
-		fallback() {
-			return {
-				duration: 300,
-				easing: quintOut,
-				css: (t) => `
-					opacity: ${t};
-					transform: perspective(1000px) translateZ(${-200 * (1 - t)}px) scale(${0.9 + 0.1 * t});
-				`
-			};
-		}
-	});
+	// Create crossfade function that returns dynamic duration based on viewport
+	function createCrossfade() {
+		// Use 0ms duration on mobile for instant transitions, 800ms on desktop
+		const duration = isMobile ? 0 : 800;
+		return crossfade({
+			duration,
+			easing: quintOut,
+			fallback() {
+				return {
+					duration: isMobile ? 0 : 300,
+					easing: quintOut,
+					css: (t) => `
+						opacity: ${t};
+						transform: perspective(1000px) translateZ(${-200 * (1 - t)}px) scale(${0.9 + 0.1 * t});
+					`
+				};
+			}
+		});
+	}
+
+	// Initialize crossfade - using $derived to make it reactive
+	const crossfadeTransitions = $derived(createCrossfade());
+	const send = $derived(crossfadeTransitions[0]);
+	const receive = $derived(crossfadeTransitions[1]);
 
 	// Derived state
 	const selectedService = $derived(selectedSlug ? getServiceBySlug(selectedSlug) : null);
@@ -62,7 +71,6 @@
 	// Subscribe to animation coordinator stores
 	let animPhase = $state('idle');
 	let cardStatesMap = $state(new Map());
-
 
 	onMount(() => {
 		checkMobile();
@@ -130,7 +138,7 @@
 			if (titleRef) {
 				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
 				const targetScroll = titleTop - 40; // 40px space from top
-				
+
 				window.scrollTo({
 					top: targetScroll,
 					behavior: 'smooth'
@@ -185,7 +193,6 @@
 		isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 	}
 
-
 	// Handle keyboard navigation
 	function handleKeyDown(e: KeyboardEvent) {
 		if (e.key === 'Escape' && selectedSlug) {
@@ -229,7 +236,7 @@
 					class:is-exiting={hasSelection && !isSelected && animPhase !== 'complete'}
 					in:receive={{ key: service.slug }}
 					out:send={{ key: service.slug }}
-					animate:flip={{ duration: shouldAnimate ? 800 : 0, easing: quintOut }}
+					animate:flip={{ duration: shouldAnimate && !isMobile ? 800 : 0, easing: quintOut }}
 				>
 					{#if !shouldHide}
 						<ServiceCard
@@ -321,8 +328,9 @@
 
 		@media (max-width: 768px) {
 			.services.has-selection & {
+				--card-size-h: 10rem;
 				/* Mobile selected state: make room for content below */
-				grid-template-rows: auto auto auto;
+				grid-template-rows: minmax(5rem, 10rem) var(--card-size-h);
 				gap: 0;
 			}
 		}
@@ -376,7 +384,7 @@
 	.has-selection {
 		@media (max-width: 768px) {
 			grid-template-columns: 1fr;
-			grid-template-rows: auto;
+			grid-template-rows: 2rem;
 			gap: 0;
 
 			& > * {
@@ -399,30 +407,33 @@
 		transition:
 			transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			grid-template-rows 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			max-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			opacity 0.8s ease,
+			// min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+			// max-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+			opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
 			z-index 0s;
+		/* Removed opacity transition - handled by Svelte crossfade */
 
 		&.is-selected {
 			grid-column: 1;
 			/* Shrink to compact size */
-			min-height: 12rem;
-			max-height: 12rem;
 			grid-template-rows: 12rem;
 
 			@media (max-width: 768px) {
 				/* Mobile: slightly taller for better visibility */
-				min-height: 10rem;
-				max-height: 10rem;
 				grid-template-rows: 10rem;
 			}
 		}
 
 		&.is-exiting {
 			pointer-events: none;
-			/* Keep visible during animation, only fade slightly */
+			/* Keep visible during animation on desktop, instant hide on mobile */
 			opacity: 0.3;
+
+			@media (max-width: 768px) {
+				/* Instant hide on mobile */
+				opacity: 0;
+				visibility: hidden;
+			}
 		}
 
 		&.is-hidden {

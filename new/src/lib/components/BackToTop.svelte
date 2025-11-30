@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Spring } from 'svelte/motion';
+	import { ArrowUp } from 'lucide-svelte';
 
 	let scrollY = $state(0);
 
@@ -28,11 +29,6 @@
 		window.addEventListener('scroll', handleScroll, { passive: true });
 		handleScroll();
 
-		// Initialize Lucide icons
-		if (typeof window !== 'undefined' && (window as any).lucide) {
-			(window as any).lucide.createIcons();
-		}
-
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
 		};
@@ -44,10 +40,6 @@
 	});
 </script>
 
-<svelte:head>
-	<script src="https://unpkg.com/lucide@latest"></script>
-</svelte:head>
-
 {#if backToTopScale.current > 0.01}
 	<button
 		class="back-to-top"
@@ -55,7 +47,7 @@
 		style="transform: scale({backToTopScale.current}); opacity: {backToTopScale.current}"
 		aria-label="Back to top"
 	>
-		<i data-lucide="arrow-up"></i>
+		<ArrowUp size={24} />
 	</button>
 {/if}
 

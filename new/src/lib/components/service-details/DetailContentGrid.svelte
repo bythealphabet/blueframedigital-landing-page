@@ -85,9 +85,9 @@
 	</div>
 
 	<!-- Additional hint text for mobile users -->
-	<div class="interaction-hint" transition:fade={{ duration: 400, delay: 600 }}>
+	<!-- <div class="interaction-hint" transition:fade={{ duration: 400, delay: 600 }}>
 		<p>Click the card above to return to all services</p>
-	</div>
+	</div> -->
 </div>
 
 <style>
@@ -114,8 +114,7 @@
 		grid-template-rows: subgrid;
 		grid-column: 1 / -1;
 		grid-row: 1 / -1;
-
-		padding: 10rem;
+		overflow: hidden;
 	}
 
 	.detail-content-grid__carousel {
@@ -145,6 +144,7 @@
 	@media (max-width: 768px) {
 		.detail-wrapper {
 			padding: var(--spacing-lg);
+			padding-top: 0;
 		}
 
 		.interaction-hint {

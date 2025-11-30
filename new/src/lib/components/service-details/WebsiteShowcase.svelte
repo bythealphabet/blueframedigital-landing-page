@@ -348,6 +348,7 @@
 
 		.showcase-text {
 			padding: var(--spacing-lg);
+			visibility: hidden;
 		}
 
 		.showcase-text p {
