@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { fly, fade, crossfade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import { flip } from 'svelte/animate';
 	import { quintOut } from 'svelte/easing';
 	import { prefersReducedMotion as reducedMotionStore } from 'svelte/motion';
@@ -14,9 +13,6 @@
 
 	// Accept optional selectedSlug prop from parent (e.g., from URL routing)
 	let { selectedSlug: initialSlug = null }: { selectedSlug?: string | null } = $props();
-
-	// Detect if we're on the home page
-	const isHomePage = $derived($page.url.pathname === '/');
 
 	// Local state for selection - initialized from prop if provided
 	let selectedSlug = $state<string | null>(initialSlug);
@@ -61,37 +57,32 @@
 	let animPhase = $state('idle');
 	let cardStatesMap = $state(new Map());
 
+	// Custom 3D elevation transition for selected card
+	// function elevatedFlip(
+	// 	node: HTMLElement,
+	// 	params: { duration: number; easing: (t: number) => number }
+	// ) {
+	// 	const { duration, easing } = params;
+	// 	return {
+	// 		duration,
+	// 		easing,
+	// 		css: (t: number, u: number) => {
+	// 			const eased = easing(t);
+	// 			// Elevation arc: 0 → 300px → 0
+	// 			const elevation = Math.sin(u * Math.PI) * 300;
+	// 			// Scale slightly during elevation
+	// 			const scale = 1 + Math.sin(u * Math.PI) * 0.1;
+	// 			// Add subtle rotation
+	// 			const rotateX = Math.sin(u * Math.PI) * 5;
 
-	onMount(() => {
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
-
-		// Setup intersection observer for scroll-triggered visibility
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				// Update visibility store with intersection ratio for hero fade effect
-				servicesVisibility.set(entry.intersectionRatio * 3);
-
-				// Update visibility state based on intersection
-				servicesVisible = entry.isIntersecting;
-			},
-			{
-				rootMargin: '0px 0px -15% 0px',
-				threshold: Array.from({ length: 101 }, (_, i) => i / 100)
-			}
-		);
-
-		if (sectionRef) {
-			observer.observe(sectionRef);
-		}
-
-		return () => {
-			if (sectionRef) {
-				observer.unobserve(sectionRef);
-			}
-			window.removeEventListener('resize', checkMobile);
-		};
-	});
+	// 			return `
+	// 				transform: perspective(1500px) translateZ(${elevation}px) scale(${scale}) rotateX(${rotateX}deg);
+	// 				z-index: ${u > 0.01 ? 100 : 1};
+	// 				box-shadow: 0 ${elevation / 3}px ${elevation}px rgba(0, 0, 0, ${0.3 * Math.sin(u * Math.PI)});
+	// 			`;
+	// 		}
+	// 	};
+	// }
 
 	onMount(() => {
 		const unsubPhase = animationCoordinator.phase.subscribe((value) => {
@@ -149,6 +140,69 @@
 		isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 	}
 
+	onMount(() => {
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+
+		// Setup intersection observer for scroll-triggered visibility
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				// Update visibility store with intersection ratio for hero fade effect
+				servicesVisibility.set(entry.intersectionRatio * 3);
+
+				if (entry.isIntersecting) {
+					servicesVisible = true;
+				}
+			},
+			{
+				rootMargin: '0px 0px -15% 0px',
+				threshold: Array.from({ length: 101 }, (_, i) => i / 100)
+			}
+		);
+
+		if (sectionRef) {
+			observer.observe(sectionRef);
+		}
+
+		return () => {
+			if (sectionRef) {
+				observer.unobserve(sectionRef);
+			}
+			window.removeEventListener('resize', checkMobile);
+		};
+	});
+
+	onMount(() => {
+		// if (selectedSlug ) {
+		// 	// Deselect - trigger deselection animation
+		// 	//
+		// 	animationCoordinator.deselectCard(
+		// 		selectedSlug,
+		// 		services.map((s) => s.slug)
+		// 	);
+		// 	// Wait for animation phase to complete before clearing selection
+		// 	setTimeout(() => {
+		// 		selectedSlug = null;
+		// 	}, 100);
+		// } else {
+		// 	// Select new card
+		// 	if (selectedSlug) {
+		// 		// Deselect current before selecting new
+		// 		animationCoordinator.deselectCard(
+		// 			selectedSlug,
+		// 			services.map((s) => s.slug)
+		// 		);
+		// 	}
+		// }
+		// Trigger selection animation
+		// if (selectedSlug) {
+		// 	animationCoordinator.selectCard(
+		// 		selectedSlug,
+		// 		services.map((s) => s.slug)
+		// 	);
+		// }
+	});
 
 	// Handle keyboard navigation
 	function handleKeyDown(e: KeyboardEvent) {
@@ -199,9 +253,7 @@
 						<ServiceCard
 							{service}
 							{isSelected}
-							{isHomePage}
 							cardState={getCardState(service.slug)}
-							cardIndex={i}
 							delay={hasSelection ? 0 : i * 150}
 							onclick={() => handleCardClick(service.slug)}
 						/>
@@ -316,9 +368,8 @@
 
 	.card-wrapper {
 		position: relative;
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-template-rows: 1fr;
+		display: flex;
+		flex-direction: column;
 		height: 100%;
 		min-height: var(--card-size-h);
 		transform-style: preserve-3d;
@@ -326,24 +377,19 @@
 		opacity: 1;
 		transition:
 			transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			grid-template-rows 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			max-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			opacity 0.8s ease,
 			z-index 0s;
+		transition: opacity 0.8s ease;
 
 		&.is-selected {
 			grid-column: 1;
-			/* Shrink to compact size */
-			min-height: 12rem;
-			max-height: 12rem;
-			grid-template-rows: 12rem;
+			/* Lock dimensions to prevent stretching */
+			min-height: var(--card-size-h);
 		}
 
 		&.is-exiting {
 			pointer-events: none;
-			/* Keep visible during animation, only fade slightly */
-			opacity: 0.3;
+			visibility: hidden;
+			opacity: 0;
 		}
 
 		&.is-hidden {

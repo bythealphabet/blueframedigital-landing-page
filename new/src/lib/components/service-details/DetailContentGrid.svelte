@@ -107,7 +107,6 @@
 	}
 
 	.detail-wrapper {
-		padding: var(--spacing-xl);
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
 		display: grid;
@@ -115,6 +114,8 @@
 		grid-template-rows: subgrid;
 		grid-column: 1 / -1;
 		grid-row: 1 / -1;
+
+		padding: 10rem;
 	}
 
 	.detail-content-grid__carousel {
