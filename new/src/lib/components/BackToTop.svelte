@@ -2,8 +2,10 @@
 	import { onMount } from 'svelte';
 	import { Spring } from 'svelte/motion';
 	import { ArrowUp } from 'lucide-svelte';
+	import { hasSelectedCard } from '$lib/stores/scrollStore';
 
 	let scrollY = $state(0);
+	let cardSelected = $state(false);
 
 	// Spring for back-to-top button scale (smooth appearance/disappearance)
 	const backToTopScale = new Spring(0, {
@@ -11,8 +13,8 @@
 		damping: 0.6
 	});
 
-	// Derived state for showing button
-	let showBackToTop = $derived(scrollY > 300);
+	// Derived state for showing button - hide if card is selected
+	let showBackToTop = $derived(scrollY > 300 && !cardSelected);
 
 	function scrollToTop() {
 		window.scrollTo({
@@ -29,8 +31,14 @@
 		window.addEventListener('scroll', handleScroll, { passive: true });
 		handleScroll();
 
+		// Subscribe to card selection state
+		const unsubscribe = hasSelectedCard.subscribe((value) => {
+			cardSelected = value;
+		});
+
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
+			unsubscribe();
 		};
 	});
 

@@ -7,7 +7,7 @@
 	import { quintOut } from 'svelte/easing';
 	import { prefersReducedMotion as reducedMotionStore } from 'svelte/motion';
 	import ServiceCard from '$lib/components/ServiceCard.svelte';
-	import { servicesVisibility } from '$lib/stores/scrollStore';
+	import { servicesVisibility, hasSelectedCard } from '$lib/stores/scrollStore';
 	import { services, getServiceBySlug } from '$lib/data/services';
 	import { animationCoordinator } from '$lib/animations/animationCoordinator';
 	import DetailContentGrid from './service-details/DetailContentGrid.svelte';
@@ -127,6 +127,9 @@
 	// Handle scroll locking and auto-scroll when selection changes
 	$effect(() => {
 		if (typeof window === 'undefined') return;
+
+		// Update store for back-to-top button
+		hasSelectedCard.set(hasSelection);
 
 		if (hasSelection) {
 			// Lock scroll
@@ -253,20 +256,45 @@
 			{/each}
 		</div>
 
-		<!-- Detail content appears after animation -->
-		{#if hasSelection && animPhase === 'complete' && selectedService}
-			<div
-				class="detail-content-area"
-				in:fly={{
-					x: shouldAnimate ? 100 : 0,
-					duration: 600,
-					delay: 200,
-					easing: quintOut
-				}}
+	<!-- Close button - appears when a card is selected -->
+	{#if hasSelection}
+		<button
+			class="close-button"
+			onclick={() => selectedSlug && handleCardClick(selectedSlug)}
+			aria-label="Close service details"
+			in:fade={{ duration: 300, delay: 300 }}
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
 			>
-				<DetailContentGrid service={selectedService} />
-			</div>
-		{/if}
+				<line x1="18" y1="6" x2="6" y2="18"></line>
+				<line x1="6" y1="6" x2="18" y2="18"></line>
+			</svg>
+		</button>
+	{/if}
+
+	<!-- Detail content appears after animation -->
+	{#if hasSelection && animPhase === 'complete' && selectedService}
+		<div
+			class="detail-content-area"
+			in:fly={{
+				x: shouldAnimate ? 100 : 0,
+				duration: 600,
+				delay: 200,
+				easing: quintOut
+			}}
+		>
+			<DetailContentGrid service={selectedService} />
+		</div>
+	{/if}
 	</div>
 
 	<!-- Screen reader announcements -->
@@ -484,5 +512,59 @@
 		clip: rect(0, 0, 0, 0);
 		white-space: nowrap;
 		border-width: 0;
+	}
+
+	/* Close button */
+	.close-button {
+		position: fixed;
+		top: var(--spacing-lg);
+		right: var(--spacing-lg);
+		z-index: 1000;
+		
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		
+		width: 3rem;
+		height: 3rem;
+		
+		background: rgba(0, 0, 0, 0.8);
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(96, 165, 250, 0.3);
+		border-radius: 50%;
+		
+		color: var(--primary-blue-bright);
+		cursor: pointer;
+		
+		transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+		
+		&:hover {
+			background: rgba(96, 165, 250, 0.2);
+			border-color: var(--primary-blue-bright);
+			transform: scale(1.05);
+		}
+		
+		&:active {
+			transform: scale(0.95);
+		}
+
+		svg {
+			width: 1.5rem;
+			height: 1.5rem;
+		}
+
+		/* Larger size on desktop */
+		@media (min-width: 769px) {
+			width: 4.5rem;
+			height: 4.5rem;
+			top: var(--spacing-xl);
+			right: var(--spacing-xl);
+			border-width: 2px;
+
+			svg {
+				width: 2.25rem;
+				height: 2.25rem;
+			}
+		}
 	}
 </style>
