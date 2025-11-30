@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450">
+  <rect width="600" height="450" fill="#1e3a8a"/>
+  <rect x="50" y="50" width="500" height="350" fill="#3b82f6" opacity="0.6" rx="4"/>
+  <polygon points="50,400 200,300 350,350 600,250 600,400" fill="#60a5fa" opacity="0.8"/>
+  <circle cx="150" cy="150" r="40" fill="#fbbf24" opacity="0.9"/>
+  <text x="300" y="230" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle" font-weight="bold">Construction</text>
+  <text x="300" y="265" font-family="Arial, sans-serif" font-size="28" fill="white" text-anchor="middle" font-weight="bold">Project 1</text>
+</svg>
+

@@ -1,0 +1,165 @@
+export interface ServiceDetailContent {
+	type: 'carousel' | 'gallery' | 'text-icon' | 'phone-mockup' | 'search-visual' | 'support-info';
+	images?: string[];
+	text?: string;
+	features?: string[];
+	stats?: { label: string; value: string }[];
+}
+
+export interface Service {
+	slug: string;
+	icon: string;
+	title: string;
+	description: string;
+	detailContent: ServiceDetailContent;
+	metaDescription: string;
+}
+
+export const services: Service[] = [
+	{
+		slug: 'professional-websites',
+		icon: 'globe',
+		title: 'Professional Websites',
+		description:
+			'Showcase your construction projects with a modern, professional website that builds trust with potential clients.',
+		detailContent: {
+			type: 'carousel',
+			images: [
+				'/images/services/professional-websites/example-1.svg',
+				'/images/services/professional-websites/example-2.svg',
+				'/images/services/professional-websites/example-3.svg',
+				'/images/services/professional-websites/example-4.svg'
+			],
+			text: 'We build custom websites using modern technologies like SvelteKit, ensuring fast load times, beautiful designs, and a professional online presence that sets you apart from competitors. Every website is tailored to showcase your unique construction expertise and project portfolio.'
+		},
+		metaDescription:
+			'Professional website development for construction businesses in Curaçao. Modern, fast, and designed to showcase your projects.'
+	},
+	{
+		slug: 'project-galleries',
+		icon: 'image',
+		title: 'Project Galleries',
+		description:
+			'Display your completed projects with beautiful photo galleries that highlight your craftsmanship and expertise.',
+		detailContent: {
+			type: 'gallery',
+			images: [
+				'/images/services/project-galleries/project-1.svg',
+				'/images/services/project-galleries/project-2.svg',
+				'/images/services/project-galleries/project-3.svg',
+				'/images/services/project-galleries/project-4.svg',
+				'/images/services/project-galleries/project-5.svg',
+				'/images/services/project-galleries/project-6.svg',
+				'/images/services/project-galleries/project-7.svg',
+				'/images/services/project-galleries/project-8.svg'
+			],
+			text: 'A picture is worth a thousand words. Our optimized photo galleries let potential clients see the quality of your work. We handle image optimization, responsive layouts, and smooth loading to ensure your projects look stunning on any device.'
+		},
+		metaDescription:
+			'Beautiful project galleries to showcase your construction work. Optimized, responsive, and designed to impress potential clients.'
+	},
+	{
+		slug: 'lead-generation',
+		icon: 'phone',
+		title: 'Lead Generation',
+		description:
+			'Convert website visitors into clients with contact forms, quote requests, and clear calls-to-action.',
+		detailContent: {
+			type: 'text-icon',
+			text: 'A website without leads is just a digital brochure. We integrate strategic contact forms, quote request systems, and clear calls-to-action throughout your site. Combined with trust-building elements like testimonials and certifications, your website becomes a 24/7 sales tool.',
+			features: [
+				'Custom contact forms with instant notifications',
+				'Quote request systems with project details',
+				'Strategic placement of CTAs throughout the site',
+				'Integration with your email and CRM systems',
+				'Testimonials and social proof displays',
+				'Trust badges and certifications'
+			],
+			stats: [
+				{ label: 'Average Conversion Rate', value: '3-5%' },
+				{ label: 'Response Time', value: '< 1 hour' },
+				{ label: 'Lead Quality', value: 'High Intent' }
+			]
+		},
+		metaDescription:
+			'Convert website visitors into construction clients with strategic lead generation forms and calls-to-action.'
+	},
+	{
+		slug: 'mobile-friendly-design',
+		icon: 'smartphone',
+		title: 'Mobile-Friendly Design',
+		description: 'Your clients browse on their phones. Your website will look perfect on all devices.',
+		detailContent: {
+			type: 'phone-mockup',
+			images: ['/images/services/mobile-friendly-design/phone-demo.svg'],
+			text: 'Over 60% of web traffic comes from mobile devices. We build responsive websites that adapt seamlessly to any screen size. Fast loading, easy navigation, and thumb-friendly buttons ensure potential clients can browse your services and contact you from anywhere.',
+			stats: [
+				{ label: 'Mobile Traffic', value: '60%+' },
+				{ label: 'Page Load Time', value: '< 2s' },
+				{ label: 'Responsive Design', value: '100%' }
+			]
+		},
+		metaDescription:
+			'Mobile-responsive website design ensuring your construction business looks perfect on all devices and screen sizes.'
+	},
+	{
+		slug: 'local-seo',
+		icon: 'search',
+		title: 'Local SEO',
+		description: 'Get found by local customers searching for construction services in Curaçao.',
+		detailContent: {
+			type: 'search-visual',
+			images: ['/images/services/local-seo/google-search.svg'],
+			text: 'Imagine a homeowner in Curaçao searches "construction company near me" or "home renovation Willemstad." With proper local SEO, your business appears at the top of the results. We optimize your website for local search terms, set up your Google Business Profile, and ensure you\'re visible when local customers are ready to hire.',
+			features: [
+				'Google Business Profile optimization',
+				'Local keyword targeting (Curaçao, Willemstad, etc.)',
+				'Schema markup for construction businesses',
+				'Local directory submissions',
+				'Review management and display',
+				'Location-specific content optimization'
+			]
+		},
+		metaDescription:
+			'Local SEO services to help your construction business rank higher in Curaçao search results and attract local clients.'
+	},
+	{
+		slug: 'ongoing-support',
+		icon: 'headphones',
+		title: 'Ongoing Support',
+		description: 'We maintain and update your website so you can focus on building.',
+		detailContent: {
+			type: 'support-info',
+			images: ['/images/services/ongoing-support/support-team.svg'],
+			text: 'Your website needs regular updates, security patches, and content changes. We provide ongoing maintenance so you can focus on what you do best—building. From adding new projects to updating contact information, we\'ve got you covered.',
+			features: [
+				'Regular security updates and backups',
+				'Content updates (new projects, team members, etc.)',
+				'Performance monitoring and optimization',
+				'Technical support via email and phone',
+				'Domain and hosting management',
+				'Monthly analytics reports',
+				'Bug fixes and troubleshooting',
+				'Feature enhancements as needed'
+			]
+		},
+		metaDescription:
+			'Reliable ongoing website support and maintenance for construction businesses. Focus on building while we maintain your site.'
+	}
+];
+
+// Helper function to get service by slug
+export function getServiceBySlug(slug: string): Service | undefined {
+	return services.find((service) => service.slug === slug);
+}
+
+// Helper function to get all service slugs (useful for static generation)
+export function getAllServiceSlugs(): string[] {
+	return services.map((service) => service.slug);
+}
+
+// Helper function to validate slug
+export function isValidServiceSlug(slug: string): boolean {
+	return services.some((service) => service.slug === slug);
+}
+
