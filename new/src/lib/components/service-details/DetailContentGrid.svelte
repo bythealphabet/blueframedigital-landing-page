@@ -24,12 +24,13 @@
 	<div class="detail-wrapper" transition:fade={{ duration: 400 }}>
 		{#if service.detailContent.type === 'carousel'}
 			<div
+				class="detail-content-grid__carousel"
 				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
 			>
-				<!-- <WebsiteShowcase
+				<WebsiteShowcase
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
-				/> -->
+				/>
 			</div>
 		{:else if service.detailContent.type === 'gallery'}
 			<div
@@ -84,28 +85,46 @@
 	</div>
 
 	<!-- Additional hint text for mobile users -->
-	<div class="interaction-hint" transition:fade={{ duration: 400, delay: 600 }}>
+	<!-- <div class="interaction-hint" transition:fade={{ duration: 400, delay: 600 }}>
 		<p>Click the card above to return to all services</p>
-	</div>
+	</div> -->
 </div>
 
 <style>
 	.detail-content-grid {
 		width: 100%;
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: subgrid;
+		grid-template-rows: subgrid;
 		gap: var(--spacing-lg);
+
 		will-change: transform, opacity;
 		transform: translateZ(0);
 		backface-visibility: hidden;
+
+		grid-column: 1 / -1;
+		grid-row: 1 / -1;
 	}
 
 	.detail-wrapper {
-		background: var(--background-card);
-		border: 2px solid var(--primary-blue);
-		border-radius: var(--radius-sm);
-		padding: var(--spacing-xl);
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+		display: grid;
+		grid-template-columns: subgrid;
+		grid-template-rows: subgrid;
+		grid-column: 1 / -1;
+		grid-row: 1 / -1;
+		overflow: hidden;
+	}
+
+	.detail-content-grid__carousel {
+		display: grid;
+		grid-template-columns: subgrid;
+		grid-template-rows: subgrid;
+		grid-gap: var(--spacing-md);
+
+		grid-column: 1 / -1;
+		grid-row: 1 / -1;
 	}
 
 	.interaction-hint {
@@ -125,6 +144,7 @@
 	@media (max-width: 768px) {
 		.detail-wrapper {
 			padding: var(--spacing-lg);
+			padding-top: 0;
 		}
 
 		.interaction-hint {

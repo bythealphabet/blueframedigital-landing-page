@@ -25,10 +25,10 @@ export const services: Service[] = [
 		detailContent: {
 			type: 'carousel',
 			images: [
-				'/images/services/professional-websites/example-1.svg',
-				'/images/services/professional-websites/example-2.svg',
-				'/images/services/professional-websites/example-3.svg',
-				'/images/services/professional-websites/example-4.svg'
+				'https://images.unsplash.com/photo-1460317442991-0ec209397118?w=1200&q=80',
+				'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80',
+				'https://images.unsplash.com/photo-1503602642458-232111445657?w=1200&q=80',
+				'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80'
 			],
 			text: 'We build custom websites using modern technologies like SvelteKit, ensuring fast load times, beautiful designs, and a professional online presence that sets you apart from competitors. Every website is tailored to showcase your unique construction expertise and project portfolio.'
 		},

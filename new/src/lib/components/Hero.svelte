@@ -15,6 +15,31 @@
 			: false;
 	const shouldAnimate = !prefersReducedMotion;
 
+	// Handle smooth scroll to services section
+	function handleServicesClick(e: MouseEvent) {
+		e.preventDefault();
+		
+		const servicesSection = document.querySelector('#services');
+		if (!servicesSection) return;
+		
+		// Find the title within the services section
+		const titleElement = servicesSection.querySelector('.section-title');
+		
+		if (titleElement) {
+			// Calculate position to place title at top with comfortable offset
+			const titleTop = titleElement.getBoundingClientRect().top + window.scrollY;
+			const offset = 60; // 60px from top for comfortable spacing
+			
+			window.scrollTo({
+				top: titleTop - offset,
+				behavior: 'smooth'
+			});
+		} else {
+			// Fallback to scrolling to section if title not found
+			servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}
+	}
+
 	onMount(() => {
 		heroVisible = true;
 
@@ -60,6 +85,7 @@
 				<a
 					href="#services"
 					class="nav-button"
+					onclick={handleServicesClick}
 					transition:fly={{
 						y: shouldAnimate ? 20 : 0,
 						duration: 600,

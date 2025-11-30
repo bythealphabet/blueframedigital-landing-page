@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Spring } from 'svelte/motion';
+	import { ArrowUp } from 'lucide-svelte';
+	import { hasSelectedCard } from '$lib/stores/scrollStore';
 
 	let scrollY = $state(0);
+	let cardSelected = $state(false);
 
 	// Spring for back-to-top button scale (smooth appearance/disappearance)
 	const backToTopScale = new Spring(0, {
@@ -10,8 +13,8 @@
 		damping: 0.6
 	});
 
-	// Derived state for showing button
-	let showBackToTop = $derived(scrollY > 300);
+	// Derived state for showing button - hide if card is selected
+	let showBackToTop = $derived(scrollY > 300 && !cardSelected);
 
 	function scrollToTop() {
 		window.scrollTo({
@@ -28,13 +31,14 @@
 		window.addEventListener('scroll', handleScroll, { passive: true });
 		handleScroll();
 
-		// Initialize Lucide icons
-		if (typeof window !== 'undefined' && (window as any).lucide) {
-			(window as any).lucide.createIcons();
-		}
+		// Subscribe to card selection state
+		const unsubscribe = hasSelectedCard.subscribe((value) => {
+			cardSelected = value;
+		});
 
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
+			unsubscribe();
 		};
 	});
 
@@ -44,10 +48,6 @@
 	});
 </script>
 
-<svelte:head>
-	<script src="https://unpkg.com/lucide@latest"></script>
-</svelte:head>
-
 {#if backToTopScale.current > 0.01}
 	<button
 		class="back-to-top"
@@ -55,7 +55,7 @@
 		style="transform: scale({backToTopScale.current}); opacity: {backToTopScale.current}"
 		aria-label="Back to top"
 	>
-		<i data-lucide="arrow-up"></i>
+		<ArrowUp size={24} />
 	</button>
 {/if}
 
