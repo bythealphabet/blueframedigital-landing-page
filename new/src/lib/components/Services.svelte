@@ -370,12 +370,18 @@
 			--card-size-h: 35rem;
 		}
 
+		/* When a card is selected - use dedicated layout */
+		.services.has-selection & {
+			grid-template-rows: auto auto auto;
+			gap: var(--spacing-lg);
+		}
+
 		@media (max-width: 768px) {
 			.services.has-selection & {
-				--card-size-h: 10rem;
-				/* Mobile selected state: make room for content below */
-				grid-template-rows: minmax(5rem, 10rem) var(--card-size-h);
-				gap: 0;
+				--card-size-h: 8rem;
+				/* Mobile selected state: compact header, small card, content area */
+				grid-template-rows: auto auto auto;
+				gap: var(--spacing-md);
 			}
 		}
 	}
@@ -448,23 +454,27 @@
 		transform-style: preserve-3d;
 		transform-origin: center center;
 		opacity: 1;
+		z-index: 1;
 		transition:
 			transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			grid-template-rows 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			// min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			// max-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+			min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
 			z-index 0s;
-		/* Removed opacity transition - handled by Svelte crossfade */
 
 		&.is-selected {
 			grid-column: 1;
 			/* Shrink to compact size */
-			grid-template-rows: 12rem;
+			grid-template-rows: auto;
+			min-height: 8rem;
+			max-height: 10rem;
+			/* Place behind the carousel */
+			z-index: 0;
 
 			@media (max-width: 768px) {
-				/* Mobile: slightly taller for better visibility */
-				grid-template-rows: 10rem;
+				/* Mobile: compact for better content visibility */
+				min-height: 6rem;
+				max-height: 8rem;
 			}
 		}
 
@@ -487,15 +497,19 @@
 	}
 
 	.detail-content-area {
-		z-index: 0;
+		z-index: 1;
 
 		display: grid;
-		grid-template-columns: repeat(3, minmax(var(--card-size-w), 1fr));
-		grid-template-rows: repeat(2, var(--card-size-h));
-		gap: var(--spacing-2xl);
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
+		gap: var(--spacing-lg);
 
 		grid-column: 2 / -2;
 		grid-row: 3;
+		
+		/* Better height management */
+		min-height: 500px;
+		max-height: calc(100vh - 200px);
 
 		@media (min-width: 1550px) {
 			grid-column: 3 / -3;
@@ -504,16 +518,16 @@
 		@media (max-width: 768px) {
 			/* Mobile: Show below the card */
 			grid-column: 1 / -1;
-			grid-template-columns: 1fr;
-			grid-template-rows: auto;
-			height: auto;
-			min-height: 40rem;
-			margin-top: var(--spacing-lg);
+			padding: 0 var(--spacing-md);
+			min-height: 450px;
+			max-height: none;
+			margin-top: var(--spacing-md);
 		}
 
 		@media (min-width: 769px) {
 			grid-row: 2;
-			height: 70rem;
+			min-height: 600px;
+			max-height: 800px;
 		}
 	}
 

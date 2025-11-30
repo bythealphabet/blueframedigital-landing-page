@@ -195,31 +195,46 @@
 <style lang="scss">
 	.showcase {
 		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: var(--spacing-2xl);
-		padding: var(--spacing-xl) 0;
+		display: grid;
+		grid-template-columns: subgrid;
+		grid-template-rows: 1fr auto;
+		gap: var(--spacing-lg);
+		padding: var(--spacing-lg);
 
 		grid-column: 1 / -1;
 		grid-row: 1 / -1;
+		
+		@media (max-width: 768px) {
+			grid-template-rows: minmax(280px, 1fr) auto;
+			padding: var(--spacing-md);
+			gap: var(--spacing-md);
+		}
 	}
 
 	.carousel-container {
 		width: 100%;
-		max-width: 1000px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: var(--spacing-xl);
+		justify-content: center;
+		gap: var(--spacing-lg);
 		transform-style: preserve-3d;
 		perspective: 1200px;
+		
+		grid-column: 1 / -1;
+		grid-row: 1;
+		min-height: 0; /* Allow shrinking */
+		z-index: 2; /* Above the selected card */
+		position: relative;
 	}
 
 	.cards {
 		position: relative;
 		width: 100%;
-		height: 500px;
+		height: 100%;
+		max-height: 450px;
+		min-height: 200px;
+		flex: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -227,7 +242,8 @@
 		perspective: 1200px;
 
 		@media (max-width: 768px) {
-			height: 350px;
+			max-height: 280px;
+			min-height: 180px;
 		}
 	}
 
@@ -395,19 +411,26 @@
 	}
 
 	.showcase-content {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		
 		max-width: 800px;
 		width: 100%;
-		margin: 0 auto;
+		justify-self: center;
 		text-align: center;
-		padding: var(--spacing-xl);
-		background: rgba(15, 23, 42, 0.4);
+		padding: var(--spacing-lg);
+		background: rgba(15, 23, 42, 0.6);
 		border: 1px solid var(--primary-blue);
 		border-radius: var(--radius-sm);
-		backdrop-filter: blur(5px);
+		backdrop-filter: blur(10px);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: var(--spacing-lg);
+		gap: var(--spacing-md);
+		
+		@media (max-width: 768px) {
+			padding: var(--spacing-md);
+		}
 	}
 
 	.description {
@@ -462,48 +485,33 @@
 		.showcase-content {
 			display: none;
 		}
+		
+		.showcase {
+			grid-template-rows: 1fr;
+		}
 	}
 
 	// Show content but adjust on small screens (375px - 389px, iPhone SE)
 	@media (min-width: 375px) and (max-width: 389px) {
-		.showcase-content {
-			padding: var(--spacing-md);
-			gap: var(--spacing-md);
-		}
-
 		.description {
 			font-size: var(--font-size-sm);
+			line-height: 1.5;
 		}
 
 		.cta-button {
-			padding: var(--spacing-sm) var(--spacing-lg);
+			padding: var(--spacing-sm) var(--spacing-md);
 			font-size: var(--font-size-sm);
 		}
 	}
 
-	// iPhone 12 and similar (390px+)
+	// iPhone 12 and similar (390px+) up to tablet
 	@media (min-width: 390px) and (max-width: 768px) {
-		.showcase-content {
-			padding: var(--spacing-lg);
-		}
-
 		.description {
 			font-size: var(--font-size-base);
 		}
 
 		.cta-button {
-			padding: var(--spacing-md) var(--spacing-lg);
-		}
-	}
-
-	@media (max-width: 768px) {
-		.showcase {
-			padding: var(--spacing-lg) 0;
-			gap: var(--spacing-lg);
-		}
-
-		.carousel-container {
-			gap: var(--spacing-lg);
+			padding: var(--spacing-sm) var(--spacing-lg);
 		}
 	}
 </style>
