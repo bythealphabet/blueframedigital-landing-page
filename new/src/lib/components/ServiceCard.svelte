@@ -302,15 +302,15 @@
 
 		&.selected {
 			cursor: pointer;
-			border-color: var(--primary-blue-bright);
+			border: none;
 			box-shadow: 
-				0 0 30px rgba(96, 165, 250, 0.4),
+				0 0 30px rgba(96, 165, 250, 0.3),
 				inset 0 0 20px rgba(96, 165, 250, 0.05);
 			background: linear-gradient(
 				135deg, 
-				var(--background-card) 0%, 
-				rgba(37, 99, 235, 0.08) 50%,
-				rgba(96, 165, 250, 0.05) 100%
+				rgba(15, 23, 42, 0.8) 0%, 
+				rgba(37, 99, 235, 0.1) 50%,
+				rgba(96, 165, 250, 0.08) 100%
 			);
 			transform-style: preserve-3d;
 			backface-visibility: hidden;

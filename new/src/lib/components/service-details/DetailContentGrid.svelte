@@ -34,6 +34,7 @@
 			</div>
 		{:else if service.detailContent.type === 'gallery'}
 			<div
+				class="detail-content-grid__gallery"
 				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<ProjectGallery
@@ -123,7 +124,8 @@
 		}
 	}
 
-	.detail-content-grid__carousel {
+	.detail-content-grid__carousel,
+	.detail-content-grid__gallery {
 		display: grid;
 		grid-template-columns: subgrid;
 		grid-template-rows: subgrid;
