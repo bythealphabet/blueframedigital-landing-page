@@ -302,22 +302,30 @@
 
 		&.selected {
 			cursor: pointer;
-			border-color: var(--primary-blue-bright);
-			box-shadow: 0 0 40px rgba(96, 165, 250, 0.5);
-			background: linear-gradient(135deg, var(--background-card) 0%, rgba(37, 99, 235, 0.05) 100%);
+			border: none;
+			box-shadow: 
+				0 0 30px rgba(96, 165, 250, 0.3),
+				inset 0 0 20px rgba(96, 165, 250, 0.05);
+			background: linear-gradient(
+				135deg, 
+				rgba(15, 23, 42, 0.8) 0%, 
+				rgba(37, 99, 235, 0.1) 50%,
+				rgba(96, 165, 250, 0.08) 100%
+			);
 			transform-style: preserve-3d;
 			backface-visibility: hidden;
 			overflow: hidden;
 			grid-row: 1;
 			align-items: center;
 			justify-content: center;
-			/* Compact mode when selected - use gap instead of padding */
-			padding: var(--spacing-md);
-			gap: var(--spacing-sm);
+			/* Compact mode when selected */
+			padding: var(--spacing-lg) var(--spacing-xl);
+			gap: var(--spacing-xs);
 
 			h3 {
-				/*font-size: var(--font-size-base);*/
+				font-size: clamp(1.5rem, 4vw, 2rem);
 				margin: 0;
+				text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
 			}
 
 			p {
@@ -329,6 +337,10 @@
 			}
 
 			&::before {
+				opacity: 0;
+			}
+			
+			&::after {
 				opacity: 0;
 			}
 		}

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Spring } from 'svelte/motion';
 	import { ArrowUp } from 'lucide-svelte';
+	import { goto } from '$app/navigation';
 	import { hasSelectedCard } from '$lib/stores/scrollStore';
 
 	let scrollY = $state(0);
@@ -17,10 +18,8 @@
 	let showBackToTop = $derived(scrollY > 300 && !cardSelected);
 
 	function scrollToTop() {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
+		// Navigate to home page and scroll to top
+		goto('/', { replaceState: false, noScroll: false });
 	}
 
 	onMount(() => {

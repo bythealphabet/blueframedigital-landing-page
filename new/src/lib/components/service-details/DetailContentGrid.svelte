@@ -25,7 +25,7 @@
 		{#if service.detailContent.type === 'carousel'}
 			<div
 				class="detail-content-grid__carousel"
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<WebsiteShowcase
 					images={service.detailContent.images || []}
@@ -34,16 +34,18 @@
 			</div>
 		{:else if service.detailContent.type === 'gallery'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				class="detail-content-grid__gallery"
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<ProjectGallery
+					categories={service.detailContent.categories || []}
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
 				/>
 			</div>
 		{:else if service.detailContent.type === 'text-icon'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<LeadGenInfo
 					text={service.detailContent.text || ''}
@@ -53,7 +55,7 @@
 			</div>
 		{:else if service.detailContent.type === 'phone-mockup'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<MobileDesignDemo
 					images={service.detailContent.images || []}
@@ -63,7 +65,7 @@
 			</div>
 		{:else if service.detailContent.type === 'search-visual'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<SEOExplainer
 					images={service.detailContent.images || []}
@@ -73,7 +75,7 @@
 			</div>
 		{:else if service.detailContent.type === 'support-info'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<SupportInfo
 					images={service.detailContent.images || []}
@@ -96,7 +98,6 @@
 		display: grid;
 		grid-template-columns: subgrid;
 		grid-template-rows: subgrid;
-		gap: var(--spacing-lg);
 
 		will-change: transform, opacity;
 		transform: translateZ(0);
@@ -107,57 +108,37 @@
 	}
 
 	.detail-wrapper {
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-
 		display: grid;
 		grid-template-columns: subgrid;
 		grid-template-rows: subgrid;
 		grid-column: 1 / -1;
 		grid-row: 1 / -1;
 		overflow: hidden;
+		
+		background: rgba(15, 23, 42, 0.3);
+		border: 1px solid rgba(96, 165, 250, 0.2);
+		border-radius: var(--radius-sm);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+		@media (min-width: 769px) {
+			padding: var(--spacing-md);
+		}
 	}
 
-	.detail-content-grid__carousel {
+	.detail-content-grid__carousel,
+	.detail-content-grid__gallery {
 		display: grid;
 		grid-template-columns: subgrid;
 		grid-template-rows: subgrid;
-		grid-gap: var(--spacing-md);
 
 		grid-column: 1 / -1;
 		grid-row: 1 / -1;
 	}
 
-	.interaction-hint {
-		text-align: center;
-		padding: var(--spacing-md);
-		background: rgba(37, 99, 235, 0.1);
-		border: 1px solid var(--primary-blue);
-		border-radius: var(--radius-sm);
-	}
-
-	.interaction-hint p {
-		color: var(--text-tertiary);
-		font-size: var(--font-size-sm);
-		margin: 0;
-	}
-
 	@media (max-width: 768px) {
 		.detail-wrapper {
-			padding: var(--spacing-lg);
+			padding: var(--spacing-md);
 			padding-top: 0;
-		}
-
-		.interaction-hint {
-			position: sticky;
-			bottom: var(--spacing-md);
-			background: rgba(15, 23, 42, 0.95);
-			backdrop-filter: blur(10px);
-		}
-	}
-
-	@media (min-width: 769px) {
-		.interaction-hint {
-			display: none;
 		}
 	}
 </style>

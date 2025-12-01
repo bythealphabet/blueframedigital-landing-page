@@ -26,6 +26,7 @@
 	let isMobile = $state(false);
 	let scrollY = $state(0);
 	let titleRef: HTMLElement;
+	let previousHasSelection = $state(false);
 
 	// Create crossfade function that returns dynamic duration based on viewport
 	function createCrossfade() {
@@ -137,10 +138,13 @@
 			document.body.style.overflow = 'hidden';
 			document.body.style.paddingRight = `${scrollbarWidth}px`;
 
-			// Scroll to position title at top with comfortable spacing
-			if (titleRef) {
-				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
-				const targetScroll = titleTop - 60; // 60px space from top for comfortable spacing
+			// Scroll to position section at top with comfortable spacing
+			// Use sectionRef for mobile, titleRef for desktop
+			const scrollTarget = isMobile ? sectionRef : titleRef;
+			if (scrollTarget) {
+				const targetTop = scrollTarget.getBoundingClientRect().top + window.scrollY;
+				// Mobile: scroll to top of section (0px offset), Desktop: 60px offset for title
+				const targetScroll = isMobile ? targetTop : targetTop - 60;
 
 				window.scrollTo({
 					top: targetScroll,
@@ -152,17 +156,34 @@
 			document.body.style.overflow = '';
 			document.body.style.paddingRight = '';
 			
-			// When deselecting, scroll to position title at top with comfortable spacing
-			if (titleRef) {
-				const titleTop = titleRef.getBoundingClientRect().top + window.scrollY;
-				const targetScroll = titleTop - 60; // 60px space from top for comfortable spacing
+			// Only scroll when transitioning from selected to unselected (actual deselection)
+			// Not when component first loads with no selection
+			if (previousHasSelection) {
+				if (isMobile && sectionRef) {
+					// Mobile: scroll to section top minus some offset to show the title
+					const targetTop = sectionRef.getBoundingClientRect().top + window.scrollY;
+					// Subtract offset to position title near top of viewport
+					const targetScroll = targetTop - 80;
 
-				window.scrollTo({
-					top: targetScroll,
-					behavior: 'smooth'
-				});
+					window.scrollTo({
+						top: targetScroll,
+						behavior: 'smooth'
+					});
+				} else if (!isMobile && titleRef) {
+					// Desktop: scroll to title position
+					const targetTop = titleRef.getBoundingClientRect().top + window.scrollY;
+					const targetScroll = targetTop - 60;
+
+					window.scrollTo({
+						top: targetScroll,
+						behavior: 'smooth'
+					});
+				}
 			}
 		}
+
+		// Update previous state for next effect run
+		previousHasSelection = hasSelection;
 	});
 
 	// Get card animation state from coordinator
@@ -342,9 +363,12 @@
 
 		@media (max-width: 768px) {
 			&.has-selection {
-				/* Minimal padding on mobile when selected */
-				padding-top: var(--spacing-lg);
+				/* Mobile: fill viewport, no extra padding */
+				padding-top: var(--spacing-md);
 				min-height: 100vh;
+				height: 100vh;
+				max-height: 100vh;
+				overflow: hidden;
 			}
 		}
 	}
@@ -365,12 +389,19 @@
 			--card-size-h: 35rem;
 		}
 
-		@media (max-width: 768px) {
-			.services.has-selection & {
-				--card-size-h: 10rem;
-				/* Mobile selected state: make room for content below */
-				grid-template-rows: minmax(5rem, 10rem) var(--card-size-h);
+		/* When a card is selected - use dedicated layout */
+		.services.has-selection & {
+			@media (min-width: 769px) {
+				/* Desktop: title row (hidden), card+content rows */
+				grid-template-rows: auto auto auto;
 				gap: 0;
+			}
+			
+			@media (max-width: 768px) {
+				--card-size-h: 8rem;
+				/* Mobile: no title row, just card in row 1, content area in row 2 */
+				grid-template-rows: auto 1fr;
+				gap: var(--spacing-md);
 			}
 		}
 	}
@@ -384,9 +415,11 @@
 		text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
 		transition:
 			font-size 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-			margin-bottom 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+			margin-bottom 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+			opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
 		grid-column: 1 / -1;
+		grid-row: 1;
 		justify-self: center;
 		align-self: center;
 	}
@@ -394,6 +427,17 @@
 	.section-title--compact {
 		font-size: var(--font-size-h3);
 		margin-bottom: var(--spacing-xl);
+		opacity: 0;
+		pointer-events: none;
+		
+		span {
+			visibility: hidden;
+		}
+		
+		@media (max-width: 768px) {
+			/* On mobile, completely hide the title when compact */
+			display: none;
+		}
 	}
 
 	.services-grid {
@@ -402,7 +446,9 @@
 		grid-template-columns: repeat(auto-fit, minmax(var(--card-size-w), 1fr));
 		grid-template-rows: repeat(auto-fit, var(--card-size-h));
 		gap: var(--spacing-2xl);
-		transition: grid-template-columns 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: 
+			grid-template-columns 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+			grid-row 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 		perspective: 2000px;
 		perspective-origin: center center;
 		transform-style: preserve-3d;
@@ -418,12 +464,27 @@
 			grid-column: 1 / -1;
 			padding: 0 var(--spacing-lg);
 		}
+		
+		/* When selected, span rows to be with title */
+		.services.has-selection & {
+			@media (min-width: 769px) {
+				grid-row: 1 / -1;
+				align-self: start;
+				padding-top: var(--spacing-xl);
+			}
+			
+			@media (max-width: 768px) {
+				/* Mobile: stay in row 1 with proper spacing */
+				grid-row: 1;
+				padding-bottom: var(--spacing-md);
+			}
+		}
 	}
 
-	.has-selection {
+	.services-grid.has-selection {
 		@media (max-width: 768px) {
 			grid-template-columns: 1fr;
-			grid-template-rows: 2rem;
+			grid-template-rows: auto;
 			gap: 0;
 
 			& > * {
@@ -443,23 +504,32 @@
 		transform-style: preserve-3d;
 		transform-origin: center center;
 		opacity: 1;
+		z-index: 1;
 		transition:
 			transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			grid-template-rows 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			// min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-			// max-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+			min-height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
 			opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
 			z-index 0s;
-		/* Removed opacity transition - handled by Svelte crossfade */
 
 		&.is-selected {
 			grid-column: 1;
 			/* Shrink to compact size */
-			grid-template-rows: 12rem;
+			grid-template-rows: auto;
+			min-height: 8rem;
+			max-height: 10rem;
 
+			@media (min-width: 769px) {
+				/* Desktop: Place behind the carousel */
+				z-index: 0;
+			}
+			
 			@media (max-width: 768px) {
-				/* Mobile: slightly taller for better visibility */
-				grid-template-rows: 10rem;
+				/* Mobile: Stay above carousel, compact for visibility */
+				min-height: 6rem;
+				max-height: 8rem;
+				z-index: 3;
+				position: relative;
 			}
 		}
 
@@ -482,33 +552,39 @@
 	}
 
 	.detail-content-area {
-		z-index: 0;
+		z-index: 1;
 
 		display: grid;
-		grid-template-columns: repeat(3, minmax(var(--card-size-w), 1fr));
-		grid-template-rows: repeat(2, var(--card-size-h));
-		gap: var(--spacing-2xl);
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr;
+		gap: var(--spacing-lg);
 
 		grid-column: 2 / -2;
-		grid-row: 3;
+		grid-row: 2;
+		
+		/* Better height management */
+		min-height: 500px;
+		max-height: calc(100vh - 200px);
 
 		@media (min-width: 1550px) {
 			grid-column: 3 / -3;
 		}
 
 		@media (max-width: 768px) {
-			/* Mobile: Show below the card */
+			/* Mobile: Show below the card in row 2 */
 			grid-column: 1 / -1;
-			grid-template-columns: 1fr;
-			grid-template-rows: auto;
-			height: auto;
-			min-height: 40rem;
-			margin-top: var(--spacing-lg);
+			grid-row: 2;
+			padding: 0 var(--spacing-md);
+			min-height: 450px;
+			max-height: none;
+			margin-top: 0;
+			z-index: 2;
 		}
 
 		@media (min-width: 769px) {
 			grid-row: 2;
-			height: 70rem;
+			min-height: 600px;
+			max-height: 800px;
 		}
 	}
 
