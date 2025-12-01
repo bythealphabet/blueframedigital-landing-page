@@ -450,6 +450,12 @@
 			object-fit: cover;
 			display: block;
 		}
+
+		// Make images bigger on desktop
+		@media (min-width: 769px) {
+			aspect-ratio: 3 / 4;
+			min-height: 400px;
+		}
 	}
 
 	.before-after-showcase,
