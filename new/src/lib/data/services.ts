@@ -10,12 +10,20 @@ export interface ProjectCategory {
 	stats?: { label: string; value: string }[];
 }
 
+export interface JourneyStep {
+	icon: string;
+	title: string;
+	description: string;
+	timeframe: string;
+}
+
 export interface ServiceDetailContent {
 	type: 'carousel' | 'gallery' | 'text-icon' | 'phone-mockup' | 'search-visual' | 'support-info';
 	images?: string[];
 	text?: string;
 	features?: string[];
-	stats?: { label: string; value: string }[];
+	stats?: { label: string; value: string; icon?: string }[];
+	journeySteps?: JourneyStep[];
 	// For gallery type with new ProjectCategory format
 	categories?: ProjectCategory[];
 }
@@ -121,7 +129,56 @@ export const services: Service[] = [
 			'Convert website visitors into clients with contact forms, quote requests, and clear calls-to-action.',
 		detailContent: {
 			type: 'text-icon',
-			text: 'A website without leads is just a digital brochure. We integrate strategic contact forms, quote request systems, and clear calls-to-action throughout your site. Combined with trust-building elements like testimonials and certifications, your website becomes a 24/7 sales tool.',
+			text: 'See exactly how we turn website visitors into paying clients—24/7. Watch the entire journey from first click to closed project.',
+			journeySteps: [
+				{
+					icon: 'user',
+					title: 'Visitor Arrives',
+					description: 'Someone finds your site looking for construction services',
+					timeframe: 'Anytime, 24/7'
+				},
+				{
+					icon: 'file-text',
+					title: 'Fills Form',
+					description: 'Name, project type, budget, timeline—everything you need',
+					timeframe: '< 30 seconds'
+				},
+				{
+					icon: 'send',
+					title: 'Instant Notification',
+					description: 'Email + SMS alert sent directly to your phone',
+					timeframe: '< 5 seconds'
+				},
+				{
+					icon: 'message-circle',
+					title: 'You Respond',
+					description: 'Reply with a quote or ask follow-up questions',
+					timeframe: '< 1 hour'
+				},
+				{
+					icon: 'handshake',
+					title: 'New Client',
+					description: 'Convert qualified lead into a paying project',
+					timeframe: '30% close rate'
+				}
+			],
+			stats: [
+				{
+					icon: 'trending-up',
+					label: 'Avg. Conversion',
+					value: '3-5%'
+				},
+				{
+					icon: 'zap',
+					label: 'Response Time',
+					value: '< 1 hour'
+				},
+				{
+					icon: 'target',
+					label: 'Lead Quality',
+					value: 'High Intent'
+				}
+			],
 			features: [
 				'Custom contact forms with instant notifications',
 				'Quote request systems with project details',
@@ -129,11 +186,6 @@ export const services: Service[] = [
 				'Integration with your email and CRM systems',
 				'Testimonials and social proof displays',
 				'Trust badges and certifications'
-			],
-			stats: [
-				{ label: 'Average Conversion Rate', value: '3-5%' },
-				{ label: 'Response Time', value: '< 1 hour' },
-				{ label: 'Lead Quality', value: 'High Intent' }
 			]
 		},
 		metaDescription:
