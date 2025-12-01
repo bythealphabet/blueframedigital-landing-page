@@ -3,11 +3,12 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { onMount } from 'svelte';
 	import BeforeAfterSlider from './BeforeAfterSlider.svelte';
+	import FilterableGalleryDemo from './FilterableGalleryDemo.svelte';
 
 	interface ProjectCategory {
 		title: string;
 		description: string;
-		type: 'images' | 'before-after' | 'video';
+		type: 'images' | 'before-after' | 'video' | 'filterable-demo';
 		// For type='images'
 		images?: string[];
 		// For type='before-after'
@@ -35,13 +36,14 @@
 	let isAutoPlaying = $state(true);
 	let containerElement: HTMLElement;
 	let isMobile = $state(false);
+	let interactionTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	// Default gallery types we can build for construction clients
 	const defaultCategories: ProjectCategory[] = [
 		{
 			title: 'Grid Portfolio Galleries',
 			description:
-				'We build elegant grid-based galleries that showcase your construction projects beautifully. Perfect for displaying multiple completed projects, allowing visitors to browse your portfolio at a glance. Each image is optimized for fast loading while maintaining stunning quality.',
+				'Showcase your finest work in stunning grid layouts. Auto-optimized images load instantly, letting your craftsmanship speak for itself.',
 			type: 'images',
 			images: [
 				'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
@@ -56,7 +58,7 @@
 		{
 			title: 'Before/After Sliders',
 			description:
-				'We develop interactive before/after comparison sliders—perfect for renovation contractors. Your clients can drag the slider to see the transformation you created. This powerful visual tool dramatically showcases the value you bring to renovation projects.',
+				'Reveal transformations with a simple drag. Let clients experience the dramatic impact of your work firsthand.',
 			type: 'before-after',
 			beforeImage: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80',
 			afterImage: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=1200&q=80',
@@ -68,7 +70,7 @@
 		{
 			title: 'Video Showcase Galleries',
 			description:
-				'We integrate video capabilities into your galleries—ideal for construction time-lapses, project walkthroughs, and client testimonials. Videos play smoothly across all devices, giving potential clients an immersive view of your work process and finished results.',
+				'Bring your projects to life. Time-lapses, walkthroughs, and testimonials that immerse visitors in your process and results.',
 			type: 'video',
 			videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
 			videoPoster: 'https://images.unsplash.com/photo-1503174971373-b1f69850bded?w=1200&q=80',
@@ -80,13 +82,8 @@
 		{
 			title: 'Filterable Project Galleries',
 			description:
-				'We build advanced filterable galleries that let visitors search and filter by project type, location, year, or custom tags. Perfect for construction companies with diverse portfolios—help clients find exactly the type of project they\'re interested in.',
-			type: 'images',
-			images: [
-				'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
-				'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80',
-				'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80'
-			],
+				'Smart filtering for diverse portfolios. Help clients find exactly what they\'re looking for—instantly.',
+			type: 'filterable-demo',
 			stats: [
 				{ label: 'Filter Options', value: 'Unlimited' },
 				{ label: 'Search Speed', value: 'Instant' }
@@ -167,6 +164,21 @@
 			isAutoPlaying = true;
 		}, 15000);
 	}
+
+	function handleUserInteraction() {
+		// Pause auto-play
+		isAutoPlaying = false;
+
+		// Clear any existing timeout
+		if (interactionTimeout) {
+			clearTimeout(interactionTimeout);
+		}
+
+		// Resume auto-play after 4 seconds of no interaction
+		interactionTimeout = setTimeout(() => {
+			isAutoPlaying = true;
+		}, 4000);
+	}
 </script>
 
 <div class="project-gallery" bind:this={containerElement}>
@@ -195,6 +207,7 @@
 						<BeforeAfterSlider
 							before={currentCategory.beforeImage}
 							after={currentCategory.afterImage}
+							on:userInteraction={handleUserInteraction}
 						/>
 					</div>
 				{:else if currentCategory.type === 'video' && currentCategory.videoUrl}
@@ -209,6 +222,10 @@
 							<track kind="captions" />
 							Your browser does not support the video tag.
 						</video>
+					</div>
+				{:else if currentCategory.type === 'filterable-demo'}
+					<div class="filterable-showcase">
+						<FilterableGalleryDemo on:userInteraction={handleUserInteraction} />
 					</div>
 				{/if}
 			</div>
@@ -382,7 +399,7 @@
 		font-size: var(--font-size-base);
 		line-height: var(--line-height-relaxed);
 		margin: 0 auto;
-		max-width: 900px;
+		max-width: 650px;
 		word-wrap: break-word;
 		overflow-wrap: break-word;
 

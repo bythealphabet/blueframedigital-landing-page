@@ -61,7 +61,7 @@ export const services: Service[] = [
 				{
 					title: 'Grid Portfolio Galleries',
 					description:
-						'We build elegant grid-based galleries that showcase your construction projects beautifully. Perfect for displaying multiple completed projects, allowing visitors to browse your portfolio at a glance. Each image is optimized for fast loading while maintaining stunning quality.',
+						'Showcase your finest work in stunning grid layouts. Auto-optimized images load instantly, letting your craftsmanship speak for itself.',
 					type: 'images',
 					images: [
 						'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
@@ -76,7 +76,7 @@ export const services: Service[] = [
 				{
 					title: 'Before/After Sliders',
 					description:
-						'We develop interactive before/after comparison sliders—perfect for renovation contractors. Your clients can drag the slider to see the transformation you created. This powerful visual tool dramatically showcases the value you bring to renovation projects.',
+						'Reveal transformations with a simple drag. Let clients experience the dramatic impact of your work firsthand.',
 					type: 'before-after',
 					beforeImage: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80',
 					afterImage: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=1200&q=80',
@@ -88,7 +88,7 @@ export const services: Service[] = [
 				{
 					title: 'Video Showcase Galleries',
 					description:
-						'We integrate video capabilities into your galleries—ideal for construction time-lapses, project walkthroughs, and client testimonials. Videos play smoothly across all devices, giving potential clients an immersive view of your work process and finished results.',
+						'Bring your projects to life. Time-lapses, walkthroughs, and testimonials that immerse visitors in your process and results.',
 					type: 'video',
 					videoUrl:
 						'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
@@ -101,13 +101,8 @@ export const services: Service[] = [
 				{
 					title: 'Filterable Project Galleries',
 					description:
-						'We build advanced filterable galleries that let visitors search and filter by project type, location, year, or custom tags. Perfect for construction companies with diverse portfolios—help clients find exactly the type of project they\'re interested in.',
-					type: 'images',
-					images: [
-						'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
-						'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80',
-						'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80'
-					],
+						'Smart filtering for diverse portfolios. Help clients find exactly what they\'re looking for—instantly.',
+					type: 'filterable-demo',
 					stats: [
 						{ label: 'Filter Options', value: 'Unlimited' },
 						{ label: 'Search Speed', value: 'Instant' }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 
 	interface Props {
 		before: string;
@@ -13,9 +13,16 @@
 	let containerElement: HTMLDivElement;
 	let isDragging = $state(false);
 
+	const dispatch = createEventDispatcher();
+
+	function notifyInteraction() {
+		dispatch('userInteraction');
+	}
+
 	function handleSliderChange(e: Event) {
 		const target = e.target as HTMLInputElement;
 		sliderValue = parseInt(target.value);
+		notifyInteraction();
 	}
 
 	function handleMouseMove(e: MouseEvent) {
@@ -25,6 +32,7 @@
 		const x = e.clientX - rect.left;
 		const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
 		sliderValue = percentage;
+		notifyInteraction();
 	}
 
 	function handleTouchMove(e: TouchEvent) {
@@ -35,16 +43,29 @@
 		const x = touch.clientX - rect.left;
 		const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
 		sliderValue = percentage;
+		notifyInteraction();
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
 		if (e.key === 'ArrowLeft') {
 			e.preventDefault();
 			sliderValue = Math.max(0, sliderValue - 1);
+			notifyInteraction();
 		} else if (e.key === 'ArrowRight') {
 			e.preventDefault();
 			sliderValue = Math.min(100, sliderValue + 1);
+			notifyInteraction();
 		}
+	}
+
+	function handleMouseDown() {
+		isDragging = true;
+		notifyInteraction();
+	}
+
+	function handleTouchStart() {
+		isDragging = true;
+		notifyInteraction();
 	}
 
 	onMount(() => {
@@ -56,9 +77,9 @@
 
 <div class="before-after-container">
 	{#if label}
-		<div class="ba-label">
+		<!-- <div class="ba-label">
 			<h4>{label}</h4>
-		</div>
+		</div> -->
 	{/if}
 
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -92,8 +113,8 @@
 		<div
 			class="ba-handle"
 			style="left: {sliderValue}%;"
-			onmousedown={() => (isDragging = true)}
-			ontouchstart={() => (isDragging = true)}
+			onmousedown={handleMouseDown}
+			ontouchstart={handleTouchStart}
 			role="slider"
 			aria-valuenow={sliderValue}
 			aria-valuemin="0"
