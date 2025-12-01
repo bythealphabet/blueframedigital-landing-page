@@ -147,9 +147,11 @@
 <style lang="scss">
 	.before-after-container {
 		width: 100%;
+		max-width: 100%;
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacing-md);
+		box-sizing: border-box;
 	}
 
 	.ba-label {
@@ -167,6 +169,7 @@
 	.ba-slider-wrapper {
 		position: relative;
 		width: 100%;
+		max-width: 100%;
 		aspect-ratio: 16 / 10;
 		overflow: hidden;
 		border-radius: var(--radius-sm);
@@ -174,6 +177,7 @@
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 		cursor: ew-resize;
 		user-select: none;
+		box-sizing: border-box;
 
 		@media (max-width: 768px) {
 			aspect-ratio: 4 / 3;
@@ -185,6 +189,7 @@
 		inset: 0;
 		width: 100%;
 		height: 100%;
+        display: flex;
 
 		img {
 			width: 100%;
@@ -282,12 +287,12 @@
 		}
 
 		@media (max-width: 768px) {
-			width: 40px;
-			height: 40px;
+			width: 32px; // Reduced from 40px
+			height: 32px; // Reduced from 40px
 
 			svg {
-				width: 14px;
-				height: 14px;
+				width: 12px; // Reduced from 14px
+				height: 12px; // Reduced from 14px
 			}
 		}
 	}
@@ -299,7 +304,7 @@
 		transform: translateX(-50%);
 		width: 80%;
 		height: 6px;
-		opacity: 0.7;
+		opacity: 0.9;
 		cursor: pointer;
 		z-index: 9;
 		appearance: none;
@@ -309,8 +314,8 @@
 
 		&::-webkit-slider-thumb {
 			appearance: none;
-			width: 20px;
-			height: 20px;
+			width: 24px;
+			height: 24px;
 			background: var(--primary-blue-bright);
 			border-radius: 50%;
 			cursor: pointer;
@@ -319,8 +324,8 @@
 		}
 
 		&::-moz-range-thumb {
-			width: 20px;
-			height: 20px;
+			width: 24px;
+			height: 24px;
 			background: var(--primary-blue-bright);
 			border-radius: 50%;
 			cursor: pointer;
@@ -330,6 +335,72 @@
 
 		&:hover {
 			opacity: 1;
+		}
+
+		@media (max-width: 768px) {
+			opacity: 1;
+			height: 8px;
+			bottom: var(--spacing-sm);
+
+			&::-webkit-slider-thumb {
+				width: 28px;
+				height: 28px;
+			}
+
+			&::-moz-range-thumb {
+				width: 28px;
+				height: 28px;
+			}
+		}
+	}
+
+	// Responsive slider sizing - Progressive enhancement for different viewports
+
+	// Very small screens - Constrain height more aggressively
+	@media (max-width: 374px) {
+		.ba-slider-wrapper {
+			aspect-ratio: 4 / 3; // Taller ratio for small screens
+			max-height: 50vh; // Increased for more space
+			min-height: 220px; // Increased
+		}
+
+		.ba-label h4 {
+			font-size: var(--font-size-sm);
+		}
+
+		.ba-badge {
+			font-size: 10px;
+			padding: 4px 8px;
+		}
+	}
+
+	// Small to medium screens - Moderate height constraint
+	@media (min-width: 375px) and (max-width: 768px) {
+		.ba-slider-wrapper {
+			max-height: 55vh; // Increased for more space
+			min-height: 280px; // Increased
+		}
+
+		.ba-label h4 {
+			font-size: var(--font-size-base);
+		}
+
+		.ba-badge {
+			font-size: 11px;
+			padding: 4px 10px;
+		}
+	}
+
+	// Desktop - More space available
+	@media (min-width: 769px) {
+		.ba-slider-wrapper {
+			max-height: 60vh; // Increased for more space
+			min-height: 400px; // Increased
+		}
+
+		.ba-badge {
+			font-size: var(--font-size-sm);
+			padding: 6px 10px; // Smaller padding
 		}
 	}
 </style>

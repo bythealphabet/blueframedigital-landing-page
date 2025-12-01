@@ -34,6 +34,7 @@
 	let currentIndex = $state(0);
 	let isAutoPlaying = $state(true);
 	let containerElement: HTMLElement;
+	let isMobile = $state(false);
 
 	// Default gallery types we can build for construction clients
 	const defaultCategories: ProjectCategory[] = [
@@ -129,7 +130,18 @@
 	const currentCategory = $derived(displayCategories[currentIndex]);
 	const shouldAnimate = !prefersReducedMotion.current;
 
+	// Derived value for max images based on screen size
+	const maxImages = $derived(isMobile ? 2 : 3);
+
 	onMount(() => {
+		// Check initial screen size
+		const checkMobile = () => {
+			isMobile = window.innerWidth <= 768;
+		};
+		
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+
 		const interval = setInterval(() => {
 			if (isAutoPlaying && displayCategories.length > 1) {
 				currentIndex = (currentIndex + 1) % displayCategories.length;
@@ -141,7 +153,10 @@
 			(window as any).lucide.createIcons();
 		}
 
-		return () => clearInterval(interval);
+		return () => {
+			clearInterval(interval);
+			window.removeEventListener('resize', checkMobile);
+		};
 	});
 
 	function selectCategory(index: number) {
@@ -162,15 +177,14 @@
 			transition:fade={{ duration: shouldAnimate ? 400 : 0 }}
 		>
 			<div class="category-header">
-				<h3 class="category-title">{currentCategory.title}</h3>
 				<p class="category-description">{currentCategory.description}</p>
 			</div>
 
 			<!-- Content based on type -->
-			<div class="category-showcaste">
+			<div class="category-showcase">
 				{#if currentCategory.type === 'images' && currentCategory.images}
 					<div class="images-grid">
-						{#each currentCategory.images.slice(0, 3) as image, i}
+						{#each currentCategory.images.slice(0, maxImages) as image, i}
 							<div class="image-item">
 								<img src={image} alt="Project {i + 1}" loading="lazy" />
 							</div>
@@ -201,14 +215,14 @@
 
 			<!-- Stats -->
 			{#if currentCategory.stats && currentCategory.stats.length > 0}
-				<div class="category-stats" transition:fade={{ duration: shouldAnimate ? 300 : 0 }}>
+				<!-- <div class="category-stats" transition:fade={{ duration: shouldAnimate ? 300 : 0 }}>
 					{#each currentCategory.stats as stat}
 						<div class="stat-item">
 							<div class="stat-value">{stat.value}</div>
 							<div class="stat-label">{stat.label}</div>
 						</div>
 					{/each}
-				</div>
+				</div> -->
 			{/if}
 
 			<!-- Controls -->
@@ -265,6 +279,8 @@
 		margin-top: var(--spacing-lg);
 		padding-top: var(--spacing-lg);
 		border-top: 1px solid rgba(96, 165, 250, 0.2);
+        grid-column: 1 / -1;
+        grid-row: 3;
 	}
 
 	.dots {
@@ -318,17 +334,23 @@
 		flex: 1;
 		max-width: 1200px;
 		width: 100%;
+        height: 100%;
 		align-self: center;
 		padding: var(--spacing-xl);
 		background: rgba(15, 23, 42, 0.6);
 		border: 1px solid var(--primary-blue);
 		border-radius: var(--radius-sm);
 		backdrop-filter: blur(10px);
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacing-lg);
 		min-height: 0;
 		overflow-y: auto;
+
+        display: grid;
+        grid-template-columns: 1fr; 
+        grid-template-rows: auto minmax(0, 1fr) auto;
+		gap: var(--spacing-lg);
+
+        grid-column: 1 / -1;
+        grid-row: 1 / -1;
 
 		@media (max-width: 768px) {
 			padding: var(--spacing-md);
@@ -339,6 +361,8 @@
 	.category-header {
 		text-align: center;
 		flex-shrink: 0;
+        grid-column: 1 / -1;
+        grid-row: 1;
 	}
 
 	.category-title {
@@ -357,9 +381,10 @@
 		color: var(--text-secondary);
 		font-size: var(--font-size-base);
 		line-height: var(--line-height-relaxed);
-		margin: 0;
-		max-width: 900px;
 		margin: 0 auto;
+		max-width: 900px;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
 
 		@media (max-width: 768px) {
 			font-size: var(--font-size-sm);
@@ -368,7 +393,13 @@
 
 	.category-showcase {
 		width: 100%;
+		max-width: 100%;
 		flex-shrink: 0;
+		overflow: hidden;
+
+        grid-column: 1 / -1;
+        grid-row: 2;
+        align-self: start;
 	}
 
 	.images-grid {
@@ -407,15 +438,29 @@
 	.before-after-showcase,
 	.video-showcase {
 		width: 100%;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-md);
 	}
 
 	.project-video {
 		width: 100%;
-		max-height: 500px;
 		border-radius: var(--radius-sm);
 		border: 2px solid var(--primary-blue-bright);
 		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 		background: black;
+		max-height: 450px;
+		display: block;
+		object-fit: contain;
+
+		@media (max-width: 768px) {
+			max-height: 280px; // Increased from 250px for better visibility
+		}
+
+		@media (min-width: 769px) {
+			max-height: 550px; // Increased from 500px to accommodate controls
+		}
 	}
 
 	.category-stats {
@@ -455,5 +500,90 @@
 	.stat-label {
 		color: var(--text-tertiary);
 		font-size: var(--font-size-sm);
+	}
+
+	// Responsive breakpoints - Progressive enhancement for different viewport sizes
+
+	// Very small screens - Hide stats, reduce spacing
+	@media (max-width: 374px) {
+		.category-stats {
+			display: none; // Hide stats to save space
+		}
+
+		.category-title {
+			font-size: var(--font-size-base);
+			margin-bottom: var(--spacing-xs);
+		}
+
+		.category-description {
+			font-size: var(--font-size-xs);
+			line-height: 1.4;
+			// Limit to 3 lines instead of 2 for better readability
+			display: -webkit-box;
+			-webkit-line-clamp: 3;
+			line-clamp: 3;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.category-content {
+			padding: var(--spacing-sm);
+			gap: var(--spacing-sm);
+		}
+	}
+
+	// Small screens (iPhone SE)
+	@media (min-width: 375px) and (max-width: 389px) {
+		.category-title {
+			font-size: var(--font-size-lg);
+		}
+
+		.category-description {
+			font-size: var(--font-size-sm);
+			line-height: 1.4;
+			// Limit to 3 lines
+			display: -webkit-box;
+			-webkit-line-clamp: 3;
+			line-clamp: 3;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
+		.stat-value {
+			font-size: var(--font-size-lg);
+		}
+
+		.stat-label {
+			font-size: var(--font-size-xs);
+		}
+
+		.category-stats {
+			gap: var(--spacing-sm);
+		}
+	}
+
+	// Medium screens (iPhone 12, tablets)
+	@media (min-width: 390px) and (max-width: 768px) {
+		.category-description {
+			font-size: var(--font-size-base);
+			// Limit to 4 lines on tablets
+			display: -webkit-box;
+			-webkit-line-clamp: 4;
+			line-clamp: 4;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+	}
+
+	// Desktop - show full text without line clamping (769px+)
+	@media (min-width: 769px) {
+		.category-description {
+			// Remove any line clamping on desktop to show full text
+			display: block;
+			-webkit-line-clamp: unset;
+			line-clamp: unset;
+			-webkit-box-orient: unset;
+			overflow: visible;
+		}
 	}
 </style>

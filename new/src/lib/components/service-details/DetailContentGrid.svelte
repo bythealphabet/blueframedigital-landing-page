@@ -25,7 +25,7 @@
 		{#if service.detailContent.type === 'carousel'}
 			<div
 				class="detail-content-grid__carousel"
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<WebsiteShowcase
 					images={service.detailContent.images || []}
@@ -35,7 +35,7 @@
 		{:else if service.detailContent.type === 'gallery'}
 			<div
 				class="detail-content-grid__gallery"
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<ProjectGallery
 					categories={service.detailContent.categories || []}
@@ -45,7 +45,7 @@
 			</div>
 		{:else if service.detailContent.type === 'text-icon'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<LeadGenInfo
 					text={service.detailContent.text || ''}
@@ -55,7 +55,7 @@
 			</div>
 		{:else if service.detailContent.type === 'phone-mockup'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<MobileDesignDemo
 					images={service.detailContent.images || []}
@@ -65,7 +65,7 @@
 			</div>
 		{:else if service.detailContent.type === 'search-visual'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<SEOExplainer
 					images={service.detailContent.images || []}
@@ -75,7 +75,7 @@
 			</div>
 		{:else if service.detailContent.type === 'support-info'}
 			<div
-				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
+				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<SupportInfo
 					images={service.detailContent.images || []}
