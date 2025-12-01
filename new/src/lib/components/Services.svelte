@@ -159,10 +159,20 @@
 			// Only scroll when transitioning from selected to unselected (actual deselection)
 			// Not when component first loads with no selection
 			if (previousHasSelection) {
-				const scrollTarget = isMobile ? sectionRef : titleRef;
-				if (scrollTarget) {
-					const targetTop = scrollTarget.getBoundingClientRect().top + window.scrollY;
-					const targetScroll = isMobile ? targetTop : targetTop - 60;
+				if (isMobile && sectionRef) {
+					// Mobile: scroll to section top minus some offset to show the title
+					const targetTop = sectionRef.getBoundingClientRect().top + window.scrollY;
+					// Subtract offset to position title near top of viewport
+					const targetScroll = targetTop - 80;
+
+					window.scrollTo({
+						top: targetScroll,
+						behavior: 'smooth'
+					});
+				} else if (!isMobile && titleRef) {
+					// Desktop: scroll to title position
+					const targetTop = titleRef.getBoundingClientRect().top + window.scrollY;
+					const targetScroll = targetTop - 60;
 
 					window.scrollTo({
 						top: targetScroll,

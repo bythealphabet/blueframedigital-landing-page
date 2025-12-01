@@ -1,9 +1,23 @@
+export interface ProjectCategory {
+	title: string;
+	description: string;
+	type: 'images' | 'before-after' | 'video';
+	images?: string[];
+	beforeImage?: string;
+	afterImage?: string;
+	videoUrl?: string;
+	videoPoster?: string;
+	stats?: { label: string; value: string }[];
+}
+
 export interface ServiceDetailContent {
 	type: 'carousel' | 'gallery' | 'text-icon' | 'phone-mockup' | 'search-visual' | 'support-info';
 	images?: string[];
 	text?: string;
 	features?: string[];
 	stats?: { label: string; value: string }[];
+	// For gallery type with new ProjectCategory format
+	categories?: ProjectCategory[];
 }
 
 export interface Service {
@@ -43,20 +57,66 @@ export const services: Service[] = [
 			'Display your completed projects with beautiful photo galleries that highlight your craftsmanship and expertise.',
 		detailContent: {
 			type: 'gallery',
-			images: [
-				'/images/services/project-galleries/project-1.svg',
-				'/images/services/project-galleries/project-2.svg',
-				'/images/services/project-galleries/project-3.svg',
-				'/images/services/project-galleries/project-4.svg',
-				'/images/services/project-galleries/project-5.svg',
-				'/images/services/project-galleries/project-6.svg',
-				'/images/services/project-galleries/project-7.svg',
-				'/images/services/project-galleries/project-8.svg'
-			],
-			text: 'A picture is worth a thousand words. Our optimized photo galleries let potential clients see the quality of your work. We handle image optimization, responsive layouts, and smooth loading to ensure your projects look stunning on any device.'
+			categories: [
+				{
+					title: 'Grid Portfolio Galleries',
+					description:
+						'We build elegant grid-based galleries that showcase your construction projects beautifully. Perfect for displaying multiple completed projects, allowing visitors to browse your portfolio at a glance. Each image is optimized for fast loading while maintaining stunning quality.',
+					type: 'images',
+					images: [
+						'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+						'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80',
+						'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80'
+					],
+					stats: [
+						{ label: 'Load Time', value: '< 2s' },
+						{ label: 'Image Optimization', value: 'Automatic' }
+					]
+				},
+				{
+					title: 'Before/After Sliders',
+					description:
+						'We develop interactive before/after comparison sliders—perfect for renovation contractors. Your clients can drag the slider to see the transformation you created. This powerful visual tool dramatically showcases the value you bring to renovation projects.',
+					type: 'before-after',
+					beforeImage: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80',
+					afterImage: 'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=1200&q=80',
+					stats: [
+						{ label: 'Engagement Boost', value: '3x Higher' },
+						{ label: 'Mobile Friendly', value: '100%' }
+					]
+				},
+				{
+					title: 'Video Showcase Galleries',
+					description:
+						'We integrate video capabilities into your galleries—ideal for construction time-lapses, project walkthroughs, and client testimonials. Videos play smoothly across all devices, giving potential clients an immersive view of your work process and finished results.',
+					type: 'video',
+					videoUrl:
+						'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+					videoPoster: 'https://images.unsplash.com/photo-1503174971373-b1f69850bded?w=1200&q=80',
+					stats: [
+						{ label: 'Video Support', value: 'All Formats' },
+						{ label: 'Auto-Optimize', value: 'Yes' }
+					]
+				},
+				{
+					title: 'Filterable Project Galleries',
+					description:
+						'We build advanced filterable galleries that let visitors search and filter by project type, location, year, or custom tags. Perfect for construction companies with diverse portfolios—help clients find exactly the type of project they\'re interested in.',
+					type: 'images',
+					images: [
+						'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
+						'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80',
+						'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80'
+					],
+					stats: [
+						{ label: 'Filter Options', value: 'Unlimited' },
+						{ label: 'Search Speed', value: 'Instant' }
+					]
+				}
+			]
 		},
 		metaDescription:
-			'Beautiful project galleries to showcase your construction work. Optimized, responsive, and designed to impress potential clients.'
+			'We build beautiful, optimized project galleries for construction businesses. From grid layouts to before/after sliders and video galleries.'
 	},
 	{
 		slug: 'lead-generation',

@@ -38,6 +38,7 @@
 				transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<ProjectGallery
+					categories={service.detailContent.categories || []}
 					images={service.detailContent.images || []}
 					text={service.detailContent.text || ''}
 				/>
