@@ -1,46 +1,72 @@
 <script lang="ts">
-	import { fly, fade } from 'svelte/transition';
+	import { fly, fade, scale } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { prefersReducedMotion } from 'svelte/motion';
+	import LeadJourneyFlow from './LeadJourneyFlow.svelte';
 
-	interface Props {
-		text: string;
-		features: string[];
-		stats: { label: string; value: string }[];
+	interface JourneyStep {
+		icon: string;
+		title: string;
+		description: string;
+		timeframe: string;
 	}
 
-	let { text, features, stats }: Props = $props();
+	interface Props {
+		text?: string;
+		features?: string[];
+		stats?: { label: string; value: string; icon?: string }[];
+		journeySteps?: JourneyStep[];
+	}
+
+	let { text, features, stats, journeySteps }: Props = $props();
 
 	const shouldAnimate = !prefersReducedMotion.current;
 </script>
 
 <div class="lead-gen-info" transition:fly={{ y: shouldAnimate ? 40 : 0, duration: 600, easing: quintOut }}>
-	<div class="intro-text" transition:fade={{ duration: 600, delay: 200 }}>
-		<p>{text}</p>
-	</div>
+	{#if text}
+		<div class="intro-text" transition:fade={{ duration: 600, delay: 200 }}>
+			<p>{text}</p>
+		</div>
+	{/if}
 
-	<div class="stats-grid" transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 300, easing: quintOut }}>
-		{#each stats as stat, i (i)}
-			<div class="stat-card" transition:scale={{ duration: 400, delay: 400 + i * 100, easing: quintOut }}>
-				<div class="stat-value">{stat.value}</div>
-				<div class="stat-label">{stat.label}</div>
-			</div>
-		{/each}
-	</div>
+	{#if journeySteps && journeySteps.length > 0}
+		<div class="journey-section" transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 300, easing: quintOut }}>
+			<LeadJourneyFlow steps={journeySteps} />
+		</div>
+	{/if}
 
-	<div class="features" transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 500, easing: quintOut }}>
-		<h3>What You Get</h3>
-		<div class="features-grid">
-			{#each features as feature, i (i)}
-				<div class="feature-item" transition:fly={{ x: shouldAnimate ? -20 : 0, duration: 400, delay: 600 + i * 80, easing: quintOut }}>
-					<div class="feature-icon">
-						<i data-lucide="check-circle"></i>
-					</div>
-					<p>{feature}</p>
+	{#if stats && stats.length > 0}
+		<div class="stats-grid" transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 400, easing: quintOut }}>
+			{#each stats as stat, i (i)}
+				<div class="stat-card" transition:scale={{ duration: 400, delay: 500 + i * 100, easing: quintOut }}>
+					{#if stat.icon}
+						<div class="stat-icon">
+							<i data-lucide={stat.icon}></i>
+						</div>
+					{/if}
+					<div class="stat-value">{stat.value}</div>
+					<div class="stat-label">{stat.label}</div>
 				</div>
 			{/each}
 		</div>
-	</div>
+	{/if}
+
+	{#if features && features.length > 0}
+		<div class="features" transition:fly={{ y: shouldAnimate ? 20 : 0, duration: 600, delay: 600, easing: quintOut }}>
+			<h3>What You Get</h3>
+			<div class="features-grid">
+				{#each features as feature, i (i)}
+					<div class="feature-item" transition:fly={{ x: shouldAnimate ? -20 : 0, duration: 400, delay: 700 + i * 80, easing: quintOut }}>
+						<div class="feature-icon">
+							<i data-lucide="check-circle"></i>
+						</div>
+						<p>{feature}</p>
+					</div>
+				{/each}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -63,6 +89,10 @@
 		margin: 0 auto;
 	}
 
+	.journey-section {
+		margin-bottom: var(--spacing-3xl);
+	}
+
 	.stats-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -77,12 +107,33 @@
 		padding: var(--spacing-xl);
 		text-align: center;
 		transition: all 0.3s ease;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--spacing-sm);
 	}
 
 	.stat-card:hover {
 		border-color: var(--primary-blue-light);
 		box-shadow: 0 12px 40px rgba(37, 99, 235, 0.3);
 		transform: translateY(-4px);
+	}
+
+	.stat-icon {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: var(--primary-blue);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: var(--spacing-xs);
+
+		i {
+			width: 24px;
+			height: 24px;
+			color: white;
+		}
 	}
 
 	.stat-value {
@@ -146,9 +197,23 @@
 			font-size: var(--font-size-base);
 		}
 
+		.journey-section {
+			margin-bottom: var(--spacing-2xl);
+		}
+
 		.stats-grid {
 			grid-template-columns: 1fr;
 			gap: var(--spacing-md);
+		}
+
+		.stat-icon {
+			width: 40px;
+			height: 40px;
+
+			i {
+				width: 20px;
+				height: 20px;
+			}
 		}
 
 		.stat-value {
@@ -157,6 +222,25 @@
 
 		.features {
 			padding: var(--spacing-lg);
+		}
+	}
+
+	@media (max-width: 374px) {
+		.intro-text {
+			margin-bottom: var(--spacing-xl);
+		}
+
+		.intro-text p {
+			font-size: var(--font-size-sm);
+			line-height: 1.5;
+		}
+
+		.journey-section {
+			margin-bottom: var(--spacing-xl);
+		}
+
+		.stat-value {
+			font-size: 2rem;
 		}
 	}
 </style>

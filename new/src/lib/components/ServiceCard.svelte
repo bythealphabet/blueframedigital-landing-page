@@ -40,7 +40,7 @@
 
 	// Respect reduced motion preference
 	const shouldAnimate = $derived(!reducedMotionStore.current);
-	
+
 	// Disable tilt effect on touch devices
 	const shouldEnableTilt = $derived(!isTouchDevice && shouldAnimate);
 
@@ -229,18 +229,20 @@
 			onmouseenter={handleMouseEnter}
 			onclick={handleClick}
 			in:entranceAnimation={{ delay, index: cardIndex, homepage: isHomePage }}
-			style="transform: perspective(1000px) {shouldEnableTilt ? `rotateX(${rotateX}deg) rotateY(${rotateY}deg)` : ''}"
+			style="transform: perspective(1000px) {shouldEnableTilt
+				? `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+				: ''}"
 			tabindex={service.slug || onclick ? 0 : -1}
 			aria-label={isSelected
 				? `${service.title} selected. Click to return to all services.`
 				: `View details about ${service.title}`}
 			aria-pressed={isSelected}
 		>
-			<h3 transition:fade={{ duration: 600, delay: delay + 200 }}>
+			<h3 class="service-card-title" transition:fade={{ duration: 600, delay: delay + 200 }}>
 				{service.title}
 			</h3>
 
-			<p transition:fade={{ duration: 600, delay: delay + 400 }}>
+			<p class="service-card-description" transition:fade={{ duration: 600, delay: delay + 400 }}>
 				{service.description}
 			</p>
 
@@ -268,7 +270,6 @@
 
 	.service-card {
 		background: var(--background-card);
-		padding: var(--spacing-xl);
 		border: 2px solid var(--primary-blue);
 		border-radius: var(--radius-sm);
 		position: relative;
@@ -287,14 +288,21 @@
 		font-family: inherit;
 		font-size: inherit;
 		color: inherit;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
+		display: grid;
+		grid-template-columns: 1.8rem 1fr 1.8rem;
+		grid-template-rows: 1.8rem 8rem 15rem 2.4rem;
+		gap: 2rem;
+
 		grid-column: 1;
 		grid-row: 1;
 		/* Performance optimizations */
 		transform: translateZ(0);
 		backface-visibility: hidden;
+
+		& > * {
+			grid-column: 2;
+			grid-row: 2;
+		}
 
 		&.clickable {
 			cursor: pointer;
@@ -303,27 +311,24 @@
 		&.selected {
 			cursor: pointer;
 			border: none;
-			box-shadow: 
-				0 0 30px rgba(96, 165, 250, 0.3),
-				inset 0 0 20px rgba(96, 165, 250, 0.05);
-			background: linear-gradient(
-				135deg, 
-				rgba(15, 23, 42, 0.8) 0%, 
+			/* background: linear-gradient(
+				135deg,
+				rgba(15, 23, 42, 0.8) 0%,
 				rgba(37, 99, 235, 0.1) 50%,
 				rgba(96, 165, 250, 0.08) 100%
-			);
+			); */
+			background-color: transparent;
 			transform-style: preserve-3d;
 			backface-visibility: hidden;
 			overflow: hidden;
 			grid-row: 1;
-			align-items: center;
 			justify-content: center;
 			/* Compact mode when selected */
-			padding: var(--spacing-lg) var(--spacing-xl);
+			/* padding: var(--spacing-lg) var(--spacing-xl); */
 			gap: var(--spacing-xs);
 
 			h3 {
-				font-size: clamp(1.5rem, 4vw, 2rem);
+				font-size: clamp(1.2rem, 4vw, 2rem);
 				margin: 0;
 				text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
 			}
@@ -339,7 +344,7 @@
 			&::before {
 				opacity: 0;
 			}
-			
+
 			&::after {
 				opacity: 0;
 			}
@@ -402,18 +407,24 @@
 			}
 		}
 
-		h3 {
+		.service-card-title {
 			/* Fixed font size to ensure consistent card heights */
 			font-size: 2.4rem;
+			font-size: clamp(2.4rem, 2.5vw, 3rem);
 			margin-bottom: var(--spacing-md);
 			color: var(--text-secondary);
 			transform: translateZ(10px);
 			transition:
 				font-size 800ms cubic-bezier(0.16, 1, 0.3, 1),
 				margin-bottom 800ms cubic-bezier(0.16, 1, 0.3, 1);
+
+			grid-row: 2;
+
+			@media (max-width: 768px) {
+			}
 		}
 
-		p {
+		.service-card-description {
 			color: var(--text-tertiary);
 			line-height: var(--line-height-relaxed);
 			transform: translateZ(5px);
@@ -423,6 +434,8 @@
 				margin 800ms cubic-bezier(0.16, 1, 0.3, 1);
 			max-height: 500px;
 			opacity: 1;
+
+			grid-row: 3;
 		}
 	}
 

@@ -48,9 +48,10 @@
 				transition:fly={{ y: 0, duration: 600, delay: 200, easing: quintOut }}
 			>
 				<LeadGenInfo
-					text={service.detailContent.text || ''}
-					features={service.detailContent.features || []}
-					stats={service.detailContent.stats || []}
+					text={service.detailContent.text}
+					features={service.detailContent.features}
+					stats={service.detailContent.stats}
+					journeySteps={service.detailContent.journeySteps}
 				/>
 			</div>
 		{:else if service.detailContent.type === 'phone-mockup'}
